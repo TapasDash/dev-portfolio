@@ -1,0 +1,112 @@
+[00:00:04.039] Server  LOG     
+[00:00:04.039] Server  LOG        We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+[00:00:04.039] Server  LOG        The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+[00:00:04.039] Server  LOG        	- include was updated to add '.next/dev/types/**/*.ts'
+[00:00:04.039] Server  LOG     
+[00:00:04.039] Server  LOG        The following mandatory changes were made to your tsconfig.json:
+
+[00:00:04.039] Server  LOG        	- jsx was set to react-jsx (next.js uses the React automatic runtime)
+[00:00:04.039] Server  LOG     
+[00:00:04.270] Server  LOG      ✓ Ready in 3.7s
+[00:00:10.059] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:10.204] Browser ERROR   uncaughtError: SyntaxError: Unexpected token ';'
+[00:00:10.204] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>
+      <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<SegmentViewNode>} forbidden={undefined} ...>
+        <RedirectBoundary>
+          <RedirectErrorBoundary router={{...}}>
+            <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} segmentPath={[...]} ...>
+              <SegmentViewNode type="page" pagePath="/Downloads...">
+                <SegmentTrieNode>
+                <ClientPageRoot Component={function Page} serverProvidedParams={{...}}>
+                  <Page params={Promise} searchParams={Promise}>
+                    <main className="w-full">
+                      <Hero>
+                      <StatsBanner>
+                      <Manifesto>
+                      <ProjectArsenal>
+                      <ContactForm>
+                        <section className="py-20 md:p...">
+                          <div className="max-w-2xl ...">
+                            <h2>
+                            <form onSubmit={function handleSubmit} className="space-y-6">
+                              <div
+-                               style={{position:"relative"}}
+                              >
+-                               <div
+-                                 className="address-autocomplete-dropdown"
+-                                 style={{position:"absolute",z-index:"9999",max-height:"300px",overflow-y:"auto",display:"none", ...}}
+-                               >
+-                               <div
+-                                 className="address-autocomplete-dropdown"
+-                                 style={{position:"absolute",z-index:"9999",max-height:"300px",overflow-y:"auto",display:"none", ...}}
+-                               >
+                              ...
+                            ...
+              ...
+            ...
+
+[00:00:10.678] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:10.678] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:10.678] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:10.678] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3001/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1763114797639}
+[00:00:10.678] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3001/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1763114797639}
+[00:00:10.678] Browser LOG     parsed {"hostname":"localhost","labels":["localhost"],"type":"RESERVED"}
+[00:00:10.679] Browser LOG     parsed {"hostname":"localhost","labels":["localhost"],"type":"RESERVED"}
+[00:02:39.485] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:39.666] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/Downloads...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" className="dark">
+                          <body
+                            className="font-sans antialiased"
+-                           __processed_37842215-6d05-4258-accd-e65edfc3f756__="true"
+-                           bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6ImVwcGlvY2VtaG1ubGJoanBsY2drb2ZjaWll..."
+                          >
+                  ...
+
+[00:02:39.921] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:02:39.921] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:02:39.921] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3001/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1763114946928}
+[00:02:52.647] Browser ERROR   Form submission error: {}
+[00:03:46.711] Server  LOG        Reload env: .env
+[00:03:59.362] Server  LOG        Reload env: .env
