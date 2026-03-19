@@ -1,212 +1,190 @@
-import { BentoCard } from "@/components/ui/bento-card";
-import { Button } from "@/components/ui/button";
-import { 
-  TerminalSquare, 
-  TrendingUp, 
-  ShieldCheck, 
-  ShieldAlert, 
-  Briefcase,
-  History,
-  Cpu,
-  Mail,
-  Code,
-  Layers
-} from "lucide-react";
+import { Shield, ShieldAlert, BadgeCheck, Mail, ArrowRight, Terminal } from "lucide-react";
 
 export default function Page() {
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 md:p-12 pt-24 md:pt-32 space-y-10">
-      
+    <div className="w-full max-w-5xl mx-auto p-6 md:p-12 min-h-screen text-on-surface font-mono uppercase tracking-widest text-[10px] sm:text-xs leading-relaxed monitor-scanline">
+
+      {/* Top Header */}
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-primary-fixed mb-24 gap-4">
+        <div>OPERATOR_ID: REVENUE_TECHNOLOGIST</div>
+        <div className="flex items-center gap-6">
+          <span>LOCATION: REMOTE_US</span>
+          <div className="flex gap-2">
+            <div className="w-3 h-2 bg-primary-fixed" />
+            <div className="w-4 h-2 bg-primary-fixed opacity-50" />
+            <div className="w-2 h-2 bg-primary-fixed" />
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <BentoCard className="relative overflow-hidden monitor-glow border-none ring-1 ring-white/5">
-        <div className="absolute top-8 right-8 text-on-surface-variant/10">
-          <TerminalSquare className="w-48 h-48" strokeWidth={1} />
+      <section className="mb-24">
+        <div className="flex items-center gap-2 text-primary-fixed mb-8">
+          <div className="w-2 h-2 bg-primary-fixed animate-pulse-block" />
+          <span>SYSTEM STATUS: OPERATIONAL</span>
         </div>
-        
-        <div className="relative z-10 flex flex-col items-start gap-8">
-          <div className="flex items-center gap-2 rounded-full border border-primary-fixed/20 bg-primary-fixed/10 px-3 py-1">
-            <div className="h-2 w-2 rounded-full bg-primary-fixed animate-pulse-primary" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary-fixed">
-              System Online: Reliability 99.9%
-            </span>
+
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-bold tracking-tighter leading-[0.9] text-white mb-16 uppercase">
+          THE DEVELOPER WHO CARES<br />
+          MORE ABOUT YOUR <br className="hidden sm:block" />
+          <span className="text-primary-fixed">CUSTOMERS</span> THAN MY CODE
+        </h1>
+
+        <div className="flex flex-col md:flex-row justify-between items-start gap-12">
+          <div className="max-w-md text-on-surface-variant">
+            EXECUTION OF HIGH-PRECISION SOFTWARE ARCHITECTURE DESIGNED FOR MAXIMUM FISCAL IMPACT. REJECTING GENERIC SOLUTIONS IN FAVOR OF MISSION-CRITICAL PERFORMANCE.
           </div>
-
-          <h1 className="max-w-4xl text-5xl md:text-7xl font-display font-medium tracking-tight text-on-surface leading-[1.1]">
-            The Developer Who Cares More About Your <span className="text-primary-fixed drop-shadow-[0_0_15px_rgba(121,255,91,0.4)]">Customers</span> Than My Code.
-          </h1>
-
-          <p className="text-xl md:text-2xl text-on-surface-variant font-display">
-            Revenue-Focused Technologist.
-          </p>
-        </div>
-      </BentoCard>
-
-      {/* Philosophy & ROI */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <BentoCard className="md:col-span-2 space-y-6">
-          <h2 className="text-2xl font-display font-bold">Philosophy</h2>
-          <div className="space-y-6 text-on-surface-variant leading-relaxed">
-            <p>
-              You know that feeling about three months after a big launch? When the initial excitement is gone and you realize your backend is held together with duct tape, hope, and the sheer willpower of your one overworked DevOps guy.
-            </p>
-            <p className="text-primary-fixed font-medium glow-text">
-              Yeah, I fix that. Most people see code. I see leverage. I see the difference between a slow API that kills your conversion rates and a fast one that feels like magic.
-            </p>
-          </div>
-        </BentoCard>
-
-        <div className="rounded-xl bg-primary-fixed p-7 text-on-primary-fixed shadow-[0_0_30px_rgba(121,255,91,0.2)] flex flex-col justify-between h-full">
-          <div className="flex justify-end">
-            <TrendingUp className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-6xl font-display font-bold tracking-tighter mb-2">
-              $2.4M
-            </div>
-            <div className="text-xs font-bold uppercase tracking-widest opacity-80 mb-8">
-              ROI Delivered
-            </div>
-            <div className="w-full bg-on-primary-fixed/20 h-1 rounded-full overflow-hidden">
-              <div className="bg-on-primary-fixed w-[85%] h-full" />
-            </div>
-            <div className="text-xs font-medium mt-3 opacity-90">
-              Infrastructure Efficiency
-            </div>
+          <div className="text-right">
+            <div className="text-on-surface-variant mb-1 text-[10px]">SUBJECT NAME</div>
+            <div className="text-2xl font-display font-bold text-white tracking-widest">TAPAS DASH</div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Case Studies */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          {
-            title: "FinTech Security",
-            case: "CASE 001",
-            icon: ShieldAlert,
-            desc: "Built an investment platform with rock-solid KYC and payment integrations. Designed for high-trust institutional environments.",
-            tags: ["Node.js", "PostgreSQL"],
-          },
-          {
-            title: "HR Compliance",
-            case: "CASE 002",
-            icon: ShieldCheck,
-            desc: "Architected an HR system to manage payroll and highly sensitive compliance data. Scaled to handle 10k+ concurrent staff nodes.",
-            tags: ["Next.js", "AWS"],
-          },
-          {
-            title: "Elite Job Board",
-            case: "CASE 003",
-            icon: Briefcase,
-            desc: "Single-handedly architected a job board for the super-rich, complete with an AI that writes decent job descriptions.",
-            tags: ["TypeScript", "OpenAI"],
-          },
-        ].map((item, i) => (
-          <BentoCard key={i} className="flex flex-col justify-between gap-6 hover:bg-surface-container-highest transition-colors decoration-slice">
-            <div className="flex items-center justify-between">
-              <item.icon className="w-5 h-5 text-primary-fixed" />
-              <span className="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase">{item.case}</span>
-            </div>
-            <div>
-              <h3 className="text-xl font-display font-bold mb-3">{item.title}</h3>
-              <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
-                {item.desc}
-              </p>
-            </div>
-            <div className="flex gap-2 mt-auto">
-              {item.tags.map(tag => (
-                <span key={tag} className="text-[10px] px-2 py-1 ghost-border rounded bg-surface-container-highest text-on-surface-variant">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </BentoCard>
-        ))}
-      </div>
+      <hr className="border-t border-outline my-16" />
 
-      {/* Timeline & Stack */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <BentoCard className="md:col-span-2">
-          <div className="flex items-center gap-3 mb-8">
-            <History className="w-5 h-5 text-primary-fixed" />
-            <h2 className="text-xl font-display font-bold">Career Timeline</h2>
+      {/* Philosophy Section */}
+      <section className="mb-24">
+        <div className="text-primary-fixed mb-8">
+          // PHILOSOPHY.SYS
+        </div>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold italic tracking-tight leading-[1] text-white">
+          "I DON'T JUST SHIP FEATURES. I OPTIMIZE FOR THE BOTTOM LINE. IF THE CODE DOESN'T CONTRIBUTE TO THE REVENUE ENGINE, IT IS TECHNICAL DEBT."
+        </h2>
+      </section>
+
+      {/* Track Record */}
+      <section className="mb-24">
+        <div className="flex flex-col sm:flex-row justify-between items-baseline mb-12 gap-4">
+          <h2 className="text-3xl font-display font-bold text-white tracking-tight">TRACK RECORD</h2>
+          <div className="text-on-surface-variant">[ DEPLOYMENT_HISTORY ]</div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              title: "FINTECH SECURITY",
+              id: "01/03",
+              icon: ShieldAlert,
+              desc: "HARDENED INFRASTRUCTURE FOR ASSET MANAGEMENT AND CRYPTOGRAPHIC TRANSACTION VALIDATION.",
+              tags: ["NODE.JS", "AWS", "POSTGRESQL"],
+            },
+            {
+              title: "HR COMPLIANCE",
+              id: "02/03",
+              icon: BadgeCheck,
+              desc: "AUTOMATED REGULATORY REPORTING AND EMPLOYEE DATA VERIFICATION SYSTEMS AT SCALE.",
+              tags: ["TYPESCRIPT", "NEXT.JS", "TESTING"],
+            },
+            {
+              title: "ELITE JOB BOARD",
+              id: "03/03",
+              icon: Shield,
+              desc: "AI-DRIVEN MATCHING ENGINE FOR HIGH-VALUABILITY CANDIDATE ACQUISITION PIPELINES.",
+              tags: ["OPENAI", "NEXT.JS", "AWS"],
+            },
+          ].map((item) => (
+            <div key={item.id} className="border border-outline p-6 flex flex-col justify-between h-full bg-black hover:border-primary-fixed/50 transition-colors">
+              <div className="flex justify-between items-center mb-12 text-primary-fixed">
+                <item.icon className="w-5 h-5" />
+                <span className="text-on-surface-variant text-[10px]">{item.id}</span>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-bold text-white mb-4 tracking-wider">{item.title}</h3>
+                <p className="text-on-surface-variant text-[10px] leading-relaxed mb-8">
+                  {item.desc}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 mt-auto">
+                {item.tags.map(tag => (
+                  <span key={tag} className="bg-primary-fixed text-black px-2 py-0.5 font-bold text-[9px]">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Deployment Timeline */}
+      <section className="mb-24">
+        <div className="flex flex-col sm:flex-row justify-between items-baseline mb-12 gap-4">
+          <h2 className="text-3xl font-display font-bold text-white tracking-tight">DEPLOYMENT TIMELINE</h2>
+          <div className="text-on-surface-variant flex items-center gap-2">
+             ARCHIVE_ID <span className="text-primary-fixed">[ LIVE_SESSION ]</span>
           </div>
-          <div className="space-y-8 pl-2">
-            {[
-              { role: "Software Developer", company: "Techype", date: "AUG 2023 - PRESENT", active: true },
-              { role: "Full Stack Developer", company: "REAL11 FANTASY SPORTS", date: "DEC 2022 - PRESENT", active: false },
-              { role: "Software Engineer", company: "Think Future Technologies", date: "OCT 2021 - NOV 2022", active: false },
-              { role: "Software Developer", company: "theflak", date: "DEC 2020 - OCT 2021", active: false },
-            ].map((job, i) => (
-              <div key={i} className="relative pl-6">
-                <div className={`absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full ${job.active ? 'bg-primary-fixed shadow-[0_0_8px_#79ff5b]' : 'bg-surface-variant'}`} />
-                {i !== 3 && <div className="absolute left-[0px] top-4 w-[1px] h-full bg-surface-variant/50" />}
-                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-                  <div>
-                    <h3 className="text-base font-bold text-on-surface">{job.company}</h3>
-                    <div className="text-sm text-on-surface-variant mt-1">{job.role}</div>
-                  </div>
-                  <div className={`text-[10px] font-bold tracking-wider ${job.active ? 'text-primary-fixed' : 'text-on-surface-variant'}`}>
-                    {job.date}
+        </div>
+
+        <div className="space-y-8">
+          {[
+            { role: "PRESENT // LEAD_ENGINEER", company: "TECHYPE", desc: "ARCHITECTING REVENUE-CRITICAL SYSTEMS AND MANAGING TECHNICAL DEBT MITIGATION STRATEGIES.", active: true },
+            { role: "2023 - 2024 // SENIOR_DEV", company: "REAL11 FANTASY SPORTS", desc: "HIGH-CONCURRENCY PLATFORM ENGINEERING FOR REAL-TIME SPORTS DATA AND TRANSACTIONAL INTEGRITY.", active: false },
+            { role: "2021 - 2023 // SOFTWARE_ENG", company: "THINK FUTURE TECHNOLOGIES", desc: "ENTERPRISE-GRADE SOLUTION ARCHITECTURE AND LEGACY SYSTEM MODERNIZATION.", active: false },
+            { role: "EARLY_CAREER // DEVELOPER", company: "THEFLAK", desc: "FOUNDATIONAL WEB DEVELOPMENT WITH A FOCUS ON CLIENT CONVERSION METRICS.", active: false },
+          ].map((job, i) => (
+            <div key={i} className="flex flex-col lg:flex-row justify-between items-start gap-4 group">
+              <div className="flex gap-6 w-full lg:w-3/4">
+                <div className="mt-1">
+                  <div className="w-3 h-3 border border-outline group-hover:border-primary-fixed transition-colors" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white tracking-widest mb-2">{job.company}</h3>
+                  <div className="text-on-surface-variant max-w-2xl text-[10px]">
+                    {job.desc}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </BentoCard>
-
-        <BentoCard>
-          <div className="flex items-center gap-3 mb-8">
-            <Cpu className="w-5 h-5 text-primary-fixed" />
-            <h2 className="text-xl font-display font-bold">Tech Stack</h2>
-          </div>
-          <div className="space-y-4">
-            {[
-              { name: "Node.js", level: "EXPERT" },
-              { name: "TypeScript", level: "CORE" },
-              { name: "Next.js", level: "MASTER" },
-              { name: "Backend Architecture", level: "SENIOR" },
-              { name: "Mobile Applications", level: "HYBRID" },
-              { name: "Chatbot Development", level: "AI FLOW" },
-            ].map(tech => (
-              <div key={tech.name} className="flex items-center justify-between p-3 rounded-lg bg-surface-container-highest ghost-border">
-                <span className="text-sm font-medium">{tech.name}</span>
-                <span className="text-[10px] font-bold tracking-widest text-primary-fixed">{tech.level}</span>
+              <div className={`text-[10px] md:text-xs font-bold shrink-0 ${job.active ? 'text-primary-fixed' : 'text-on-surface-variant'}`}>
+                {job.role}
               </div>
-            ))}
-          </div>
-        </BentoCard>
-      </div>
-
-      {/* Footer / CTA */}
-      <div className="py-20 flex flex-col items-center text-center">
-        <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
-          Let's build something <span className="text-primary-fixed">valuable.</span>
-        </h2>
-        <p className="text-on-surface-variant max-w-lg mb-10">
-          Available for select high-stakes engineering roles and high-impact consultations.
-        </p>
-        
-        <div className="flex flex-wrap items-center justify-center gap-4 mb-20">
-          <Button size="lg" className="px-8">
-            <Mail className="w-4 h-4 mr-2" />
-            TAPASDASH017@GMAIL.COM
-          </Button>
-          <Button variant="secondary" size="icon-lg">
-            <Code className="w-4 h-4" />
-          </Button>
-          <Button variant="secondary" size="icon-lg">
-            <Layers className="w-4 h-4" />
-          </Button>
+            </div>
+          ))}
         </div>
+      </section>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between w-full text-[10px] font-bold tracking-widest text-on-surface-variant uppercase gap-4">
-          <span>COPYRIGHT © 2024 SOVEREIGN ENGINE</span>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-primary-fixed transition-colors">GITHUB: TAPASDASH</a>
-            <a href="#" className="hover:text-primary-fixed transition-colors">LINKEDIN: TAPAS-DASH-41374A138</a>
+      {/* Establish Connection */}
+      <section className="mb-24 border border-outline p-6 md:p-12">
+        <div className="flex flex-col lg:flex-row gap-12 justify-between">
+          <div className="max-w-sm">
+            <h2 className="text-3xl font-display font-bold text-white tracking-tight mb-6">ESTABLISH<br />CONNECTION</h2>
+            <p className="text-on-surface-variant leading-relaxed">
+              I AM CURRENTLY SELECTIVE ABOUT NEW ENGAGEMENTS. IF YOUR VENTURE REQUIRES HIGH-PRECISION REVENUE TECHNOLOGY, INITIALIZE CONTACT.
+            </p>
+          </div>
+          
+          <div className="flex-1 max-w-lg flex flex-col gap-4">
+            <a href="mailto:TAPASDASH017@GMAIL.COM" className="border border-outline hover:border-primary-fixed bg-black text-white p-4 flex justify-between items-center transition-colors group">
+              <span className="tracking-widest">TAPASDASH017@GMAIL.COM</span>
+              <ArrowRight className="w-4 h-4 text-on-surface-variant group-hover:text-primary-fixed transition-colors" />
+            </a>
+            <div className="grid grid-cols-2 gap-4">
+              <a href="#" className="border border-outline hover:border-primary-fixed bg-black text-white p-4 text-center transition-colors">
+                GITHUB: TAPASDASH
+              </a>
+              <a href="#" className="border border-outline hover:border-primary-fixed bg-black text-white p-4 text-center transition-colors">
+                LINKEDIN
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 border-t border-outline text-[9px] sm:text-[10px]">
+        <div className="text-primary-fixed">
+          © 2024 SOVEREIGN_OPERATOR // ALL RIGHTS RESERVED
+        </div>
+        <div className="text-on-surface-variant flex gap-6">
+          <a href="#" className="hover:text-white transition-colors">GITHUB</a>
+          <a href="#" className="hover:text-white transition-colors">LINKEDIN</a>
+          <a href="#" className="hover:text-white transition-colors flex items-center gap-2">
+             TERMINAL_LOG
+          </a>
+        </div>
+      </footer>
 
     </div>
   );

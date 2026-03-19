@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
 
 export const metadata: Metadata = {
@@ -29,9 +29,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { Sidebar } from "@/components/layout/sidebar";
-import { TopNav } from "@/components/layout/top-nav";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,10 +36,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased text-on-surface bg-surface flex`}>
-        <Sidebar />
-        <TopNav />
-        <main className="flex-1 md:ml-64 relative min-h-screen">
+      <body className={`${jetbrainsMono.variable} ${spaceGrotesk.variable} font-mono antialiased text-on-surface bg-black selection:bg-primary-fixed selection:text-black`}>
+        <main className="w-full min-h-screen">
           {children}
         </main>
         <Analytics />
