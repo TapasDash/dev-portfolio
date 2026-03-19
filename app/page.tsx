@@ -161,12 +161,23 @@ export default function Page() {
               <ArrowRight className="w-4 h-4 text-on-surface-variant group-hover:text-primary-fixed transition-colors" />
             </a>
             <div className="grid grid-cols-2 gap-4">
-              <a href="#" className="border border-outline hover:border-primary-fixed bg-black text-white p-4 text-center transition-colors">
-                GITHUB: TAPASDASH
-              </a>
-              <a href="#" className="border border-outline hover:border-primary-fixed bg-black text-white p-4 text-center transition-colors">
-                LINKEDIN
-              </a>
+         <a
+  href="https://github.com/tapasdash"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="border border-outline hover:border-primary-fixed bg-black text-white p-4 text-center transition-colors"
+>
+  GITHUB: TAPASDASH
+</a>
+
+<a
+  href="https://www.linkedin.com/in/tapas-dash-41374a138/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="border border-outline hover:border-primary-fixed bg-black text-white p-4 text-center transition-colors"
+>
+  LINKEDIN
+</a>
             </div>
           </div>
         </div>
