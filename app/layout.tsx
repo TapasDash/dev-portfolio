@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
 
 export const metadata: Metadata = {
   title: "Tapas Dash | Revenue-Focused Technologist",
@@ -29,6 +29,9 @@ export const metadata: Metadata = {
   },
 };
 
+import { Sidebar } from "@/components/layout/sidebar";
+import { TopNav } from "@/components/layout/top-nav";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,8 +39,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`font-sans antialiased`}>
-        {children}
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased text-on-surface bg-surface flex`}>
+        <Sidebar />
+        <TopNav />
+        <main className="flex-1 md:ml-64 relative min-h-screen">
+          {children}
+        </main>
         <Analytics />
       </body>
     </html>
