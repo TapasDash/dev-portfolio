@@ -1,13 +1,94 @@
 'use client'
 
-import { Shield, ShieldAlert, BadgeCheck, Mail, ArrowRight, Terminal, X, ExternalLink, Cpu } from "lucide-react";
+import { Shield, ShieldAlert, BadgeCheck, Mail, ArrowRight, Terminal, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+
+// Canvas HTML5 Matrix digital rain effect overlay
+function MatrixRain({ onClose }: { onClose: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+
+    const resizeCanvas = () => {
+      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const alphabet = katakana.split('');
+
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+
+    const rainDrops: number[] = [];
+    for (let x = 0; x < columns; x++) {
+      rainDrops[x] = 1;
+    }
+
+    const draw = () => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Extract current active theme color variable or fallback
+      const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary-fixed') || '#00FF00';
+      ctx.fillStyle = activeColor.trim();
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < rainDrops.length; i++) {
+        const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          rainDrops[i] = 0;
+        }
+        rainDrops[i]++;
+      }
+    };
+
+    const interval = setInterval(draw, 35);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return (
+    <div className="absolute inset-0 z-20 bg-black overflow-hidden flex flex-col justify-between p-4">
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-80" />
+      <div className="relative z-30 flex justify-between items-center w-full text-[10px] select-none bg-black/60 p-2 border border-primary-fixed/30 backdrop-blur-sm mt-auto">
+        <span className="text-primary-fixed animate-pulse font-bold tracking-widest">// SECURE MATRIX STREAM ACTIVE //</span>
+        <button 
+          onClick={onClose}
+          className="text-black bg-primary-fixed hover:bg-black hover:text-primary-fixed px-3 py-0.5 border border-primary-fixed font-bold transition-all duration-200 cursor-pointer"
+        >
+          [ EXIT_MATRIX ]
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Page() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [terminalInput, setTerminalInput] = useState('');
   const [timeString, setTimeString] = useState('');
+  const [activeTheme, setActiveTheme] = useState('green');
+  const [showMatrix, setShowMatrix] = useState(false);
   
+  // Sudo reactor countdown state
+  const [reactorStatus, setReactorStatus] = useState<'nominal' | 'countdown' | 'crash'>('nominal');
+  const [countdownTimer, setCountdownTimer] = useState(5);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   // Terminal interaction history state
   const [terminalHistory, setTerminalHistory] = useState<{
     type: 'input' | 'output' | 'error' | 'success';
@@ -22,12 +103,69 @@ export default function Page() {
 
   const terminalEndRef = useRef<HTMLDivElement>(null);
 
+  // Update theme colors dynamically on document node
+  useEffect(() => {
+    const root = document.documentElement;
+    if (activeTheme === 'green') {
+      root.style.setProperty('--color-primary-fixed', '#00FF00');
+      root.style.setProperty('--color-ring', '#00FF00');
+      root.style.setProperty('--color-secondary', '#00FF00');
+    } else if (activeTheme === 'amber') {
+      root.style.setProperty('--color-primary-fixed', '#FFB000');
+      root.style.setProperty('--color-ring', '#FFB000');
+      root.style.setProperty('--color-secondary', '#FFB000');
+    } else if (activeTheme === 'cyan') {
+      root.style.setProperty('--color-primary-fixed', '#00E5FF');
+      root.style.setProperty('--color-ring', '#00E5FF');
+      root.style.setProperty('--color-secondary', '#00E5FF');
+    } else if (activeTheme === 'pink') {
+      root.style.setProperty('--color-primary-fixed', '#FF007F');
+      root.style.setProperty('--color-ring', '#FF007F');
+      root.style.setProperty('--color-secondary', '#FF007F');
+    }
+  }, [activeTheme]);
+
+  // Sudo Reactor Self-Destruct Countdown loop hook
+  useEffect(() => {
+    if (reactorStatus === 'countdown') {
+      countdownIntervalRef.current = setInterval(() => {
+        setCountdownTimer(prev => {
+          if (prev <= 1) {
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+            setReactorStatus('crash');
+            setTerminalHistory(prevHistory => [
+              ...prevHistory,
+              { type: 'error', text: `[CRITICAL FAILURE] REACTOR CONTAINER SHIELD FLUID DISCHARGED.` },
+              { type: 'error', text: `\n===================================================\n[SYSTEM CRASH] BOOTING SECURE BIO-SHELL BIOS v0.1\n===================================================\nREACTOR SYSTEM SHIELD: INOPERATIVE.\nSYSTEM CORE INTEGRITY: TERMINATED.\n\nTYPE "RELOAD" TO BOOT SYSTEM CORE BACK ONLINE.\n===================================================` }
+            ]);
+            return 0;
+          } else {
+            const nextVal = prev - 1;
+            setTerminalHistory(prevHistory => [
+              ...prevHistory,
+              { type: 'error', text: `[DANGER] MOCK SELF-DESTRUCT IN ${nextVal} SECONDS...` }
+            ]);
+            return nextVal;
+          }
+        });
+      }, 1000);
+    } else {
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+      }
+    }
+
+    return () => {
+      if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+    };
+  }, [reactorStatus]);
+
   // Auto-scroll terminal history to bottom
   useEffect(() => {
     if (terminalEndRef.current) {
       terminalEndRef.current.scrollTop = terminalEndRef.current.scrollHeight;
     }
-  }, [terminalHistory]);
+  }, [terminalHistory, showMatrix]);
 
   // Update timezone clock
   useEffect(() => {
@@ -61,31 +199,139 @@ export default function Page() {
     const input = terminalInput.trim().toLowerCase();
     if (!input) return;
 
+    // Command interceptor if bios crashed
+    if (reactorStatus === 'crash') {
+      if (input === 'reload') {
+        setReactorStatus('nominal');
+        setTerminalHistory([
+          { type: 'success', text: 'SYSTEM CORE BOOT BOOTSTRAP INITIATED...' },
+          { type: 'success', text: 'BIOS SELF-DIAGNOSTIC SYSTEM INVENTORY: 100% OK.' },
+          { type: 'success', text: 'RE-ATTACHING SECURE GRID ADAPTER SHIELD...' },
+          { type: 'output', text: 'SOVEREIGN OS v4.1.9-STABLE (x86_64-port)' },
+          { type: 'output', text: 'INITIALIZING SECURE LINK TO REMOTE HOST...' },
+          { type: 'output', text: 'CONNECTION ESTABLISHED VIA ENCRYPTED PORT 3005.' },
+          { type: 'output', text: 'TYPE "HELP" FOR A LIST OF SECURE SYSTEM COMMANDS.' },
+          { type: 'output', text: '---------------------------------------------------' }
+        ]);
+      } else {
+        setTerminalHistory(prev => [
+          ...prev, 
+          { type: 'input', text: terminalInput.toUpperCase() },
+          { type: 'error', text: 'SYSTEM TERMINAL OFFLINE. INPUT "RELOAD" TO REBOOT INTERFACE.' }
+        ]);
+      }
+      setTerminalInput('');
+      return;
+    }
+
     const newHistory = [...terminalHistory, { type: 'input' as const, text: terminalInput.toUpperCase() }];
     let reply = '';
     let replyType: 'output' | 'error' | 'success' = 'output';
 
-    switch (input) {
-      case 'help':
-        reply = `AVAILABLE SYSTEM UTILITIES:
-  HELP       - DISPLAY THIS ACTIVE DIRECTORY
-  ABOUT      - RETRIEVE OPERATOR PROFILE & PHILOSOPHY
-  PROJECTS   - RETRIEVE ARCHIVED SYSTEM ARCHITECTURES
-  TIMELINE   - RETRIEVE CHRONOLOGICAL EXP LOGS
-  CONTACT    - CONNECT WITH THE SOVEREIGN OPERATOR
-  CLEAR      - CLEAR SYSTEM HISTORY
-  EXIT       - TERMINATE SECURE SHELL SESSION`;
-        break;
-      case 'about':
-        reply = `OPERATOR DOSSIER:
+    // Intercept active self-destruct abort signal
+    if (input === 'abort' && reactorStatus === 'countdown') {
+      setReactorStatus('nominal');
+      setTerminalHistory([...newHistory, {
+        type: 'success',
+        text: `[OVERRIDE SHIELD CONFIRMED]
+REACTOR SYSTEM SHIELD MOCK CRITICAL SHIELD ACTIVE.
+ABORT DESTRUCT PROCESS CONFIRMED.
+SAFE ENVIRONMENTAL RESTORED. CORE ENGINE STABILIZED.`
+      }]);
+      setTerminalInput('');
+      return;
+    }
+
+    // Dynamic start-width parses
+    if (input.startsWith('theme ')) {
+      const selectedColor = input.replace('theme ', '').trim();
+      if (['green', 'amber', 'cyan', 'pink'].includes(selectedColor)) {
+        setActiveTheme(selectedColor);
+        reply = `ACCENT PALETTE INSTANTLY TRANSITIONED TO ${selectedColor.toUpperCase()} retro accent. SUCCESS.`;
+        replyType = 'success';
+      } else {
+        reply = `THEME ACCENT "${selectedColor.toUpperCase()}" NOT REGISTERED. AVAILABLE PALETTES: GREEN, AMBER, CYAN, PINK.`;
+        replyType = 'error';
+      }
+    } 
+    else if (input.startsWith('sudo')) {
+      const commandAfterSudo = input.replace('sudo', '').trim();
+      if (commandAfterSudo.startsWith('rm -rf') || commandAfterSudo.includes('destruct') || commandAfterSudo === '') {
+        setReactorStatus('countdown');
+        setCountdownTimer(5);
+        reply = `[CRITICAL WARNING] PRIVILEGED ACCESS GRANTED.
+[ALERT] SYSTEM REACTOR CORE OVERLOAD INITIATED!
+[DANGER] MOCK SELF-DESTRUCT IN 5 SECONDS...
+[ACTION REQUIRED] INPUT "ABORT" TO OVERRIDE CORRUPTION DESTRUCTION.`;
+        replyType = 'error';
+      } else {
+        reply = `[ACCESS CONTROL] COMMAND "${commandAfterSudo.toUpperCase()}" REQUIRES ENCRYPTED CREDENTIALS. PERMISSION DENIED.`;
+        replyType = 'error';
+      }
+    } 
+    else if (input.startsWith('msg ')) {
+      const parts = input.slice(4).split(' ');
+      const senderEmail = parts[0];
+      const content = parts.slice(1).join(' ');
+
+      if (!senderEmail || !content) {
+        reply = `CORRESPONDENCE PIPELINE DISPATCH ERROR.
+USAGE: MSG <EMAIL> <YOUR_MESSAGE_CONTENT>
+EXAMPLE: MSG RECRUITER@MICROSOFT.COM INTERESTED IN HIRING FOR REVENUE SYSTEMS`;
+        replyType = 'error';
+      } else {
+        reply = `PARSING DISPATCH SECURE PAYLOAD...
+SENDER: ${senderEmail.toUpperCase()}
+CONTENT: ${content.toUpperCase()}
+TRANSMITTING CORRESPONDENCE DATA PACKET...`;
+        replyType = 'output';
+        
+        // Trigger asynchronous fetch call
+        fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: `CLI Operator [${senderEmail}]`, email: senderEmail, message: content })
+        })
+        .then(res => {
+          if (res.ok) {
+            setTerminalHistory(prev => [...prev, { type: 'success', text: `[SUCCESS] PAYLOAD SECURELY DEPOSITED INTO TAPAS' INBOX.` }]);
+          } else {
+            setTerminalHistory(prev => [...prev, { type: 'error', text: `[ERROR] DATA ROUTING FAILURE. CODE RESEND_API_REFUSED.` }]);
+          }
+        })
+        .catch(() => {
+          setTerminalHistory(prev => [...prev, { type: 'error', text: `[ERROR] LOCAL ROUTE UNREACHABLE. DISPATCH CANCELLED.` }]);
+        });
+      }
+    }
+    else {
+      // Standard static matching commands switch
+      switch (input) {
+        case 'help':
+          reply = `AVAILABLE SYSTEM UTILITIES:
+  HELP              - DISPLAY THIS ACTIVE DIRECTORY
+  ABOUT             - RETRIEVE OPERATOR PROFILE & PHILOSOPHY
+  PROJECTS          - RETRIEVE ARCHIVED SYSTEM ARCHITECTURES
+  TIMELINE          - RETRIEVE CHRONOLOGICAL EXP LOGS
+  SKILLS            - GRAPH CORE ENGINE SKILL GRAPHS
+  THEME <COLOR>     - SWITCH THEME ACCENTS (GREEN, AMBER, CYAN, PINK)
+  NEOFETCH          - RETRIEVE CHASSIS SYSTEM SPECIFICATIONS
+  MATRIX            - STREAM RETRO MATRIX CODE ON INTERFACE
+  MSG <EMAIL> <MSG> - TRANSMIT SECURE CLI CORRESPONDENCE
+  SUDO RM -RF /     - PRIVILEGED OPERATOR ACTION (PROCEED CAUTIOUSLY)
+  CLEAR             - PURGE CONSOLE TERMINAL BUFFER
+  EXIT              - TERMINATE SECURE SHELL SESSION`;
+          break;
+        case 'about':
+          reply = `OPERATOR DOSSIER:
   NAME: TAPAS DASH
   ROLE: REVENUE-FOCUSED TECHNOLOGIST & LEAD ENGINEER
   MISSION: DESIGNING SOFTWARE ARCHITECTURE FOR MAXIMUM FISCAL IMPACT.
   PHILOSOPHY: "IF CODE DOES NOT CONTRIBUTE TO THE REVENUE ENGINE, IT IS AN ELIMINABLE EXPENSE."`;
-        replyType = 'success';
-        break;
-      case 'projects':
-        reply = `PROJECT RECORD INTEGRITY CHECK: SECURE.
+          replyType = 'success';
+          break;
+        case 'projects':
+          reply = `PROJECT RECORD INTEGRITY CHECK: SECURE.
 
 [PROJECT 01/03] - FINTECH SECURITY
   - DESCRIPTION: HARDENED INFRASTRUCTURE FOR ASSET MANAGEMENT & CRYPTO VALIDATION.
@@ -98,10 +344,10 @@ export default function Page() {
 [PROJECT 03/03] - ELITE JOB BOARD
   - DESCRIPTION: MACHINE-LEARNING MATCHING ENGINE OPTIMIZED FOR PIPELINE CONVERSIONS.
   - STACK: OPENAI // NEXT.JS // AWS`;
-        replyType = 'success';
-        break;
-      case 'timeline':
-        reply = `DEPLOYMENT TIMELINE DECRYPTED:
+          replyType = 'success';
+          break;
+        case 'timeline':
+          reply = `DEPLOYMENT TIMELINE DECRYPTED:
 
   [PRESENT] LEAD ENGINEER @ TECHYPE
             - ARCHITECTING REVENUE-CRITICAL PLATFORMS AND REFACTORS.
@@ -111,25 +357,53 @@ export default function Page() {
             - SYSTEM MODERNIZATION & SOLUTION ARCHITECTURE.
   [EARLIER] DEVELOPER @ THEFLAK
             - FOUNDATIONAL WEB AND CONVERSION PIPELINE DEVELOPMENT.`;
-        break;
-      case 'contact':
-        reply = `ESTABLISH SECURE LINK VIA:
+          break;
+        case 'skills':
+          reply = `OPERATOR CORE COMPETENCIES:
+  
+  SYSTEMS ARCHITECTURE  [██████████████░░] 85%
+  REVENUE OPTIMIZATION  [███████████████░] 90%
+  NEXT.JS / REACT 19    [████████████████] 100%
+  BACKEND & AWS SEC     [██████████████░░] 85%
+  DATABASE SCALING      [████████████░░░░] 75%`;
+          replyType = 'success';
+          break;
+        case 'neofetch':
+          reply = `
+    _______      OPERATOR: TAPAS DASH
+   |.-----.|     ROLE: REVENUE-FOCUSED TECHNOLOGIST
+   ||     ||     OS: SOVEREIGN.OS v4.1.9
+   ||_____||     SHELL: ANTIGRAVITY-ZSH
+   |_/___\\\\_|     THEME: ${activeTheme.toUpperCase()} ACCENT
+   /########\\\\    UPTIME: ${Math.floor(performance.now() / 1000)}s
+  /##########\\\\   COMPILER: NEXT.JS 16 // TURBOPACK
+`;
+          replyType = 'success';
+          break;
+        case 'matrix':
+          setShowMatrix(true);
+          reply = 'INITIALIZING MATRIX DIGITAL CODE RAIN SIMULATION ON LAYER 2...';
+          replyType = 'success';
+          break;
+        case 'contact':
+          reply = `ESTABLISH SECURE LINK VIA:
   - EMAIL:    TAPASDASH017@GMAIL.COM
   - GITHUB:   HTTPS://GITHUB.COM/TAPASDASH
   - LINKEDIN: HTTPS://WWW.LINKEDIN.COM/IN/TAPAS-DASH-41374A138/`;
-        replyType = 'success';
-        break;
-      case 'clear':
-        setTerminalHistory([]);
-        setTerminalInput('');
-        return;
-      case 'exit':
-        setIsTerminalOpen(false);
-        setTerminalInput('');
-        return;
-      default:
-        reply = `COMMAND NOT FOUND: "${input.toUpperCase()}". TYPE "HELP" FOR A LIST OF VALID COMMANDS.`;
-        replyType = 'error';
+          replyType = 'success';
+          break;
+        case 'clear':
+          setTerminalHistory([]);
+          setTerminalInput('');
+          return;
+        case 'exit':
+          setIsTerminalOpen(false);
+          setTerminalInput('');
+          return;
+        default:
+          reply = `COMMAND NOT FOUND: "${input.toUpperCase()}". TYPE "HELP" FOR A LIST OF VALID COMMANDS.`;
+          replyType = 'error';
+      }
     }
 
     setTerminalHistory([...newHistory, { type: replyType, text: reply }]);
@@ -430,8 +704,12 @@ export default function Page() {
 
             {/* Terminal Log Console */}
             <div 
-              className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 text-[10px] md:text-xs select-text leading-relaxed font-mono"
+              className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 text-[10px] md:text-xs select-text leading-relaxed font-mono relative"
             >
+              {showMatrix && (
+                <MatrixRain onClose={() => setShowMatrix(false)} />
+              )}
+
               {/* Output history */}
               {terminalHistory.map((line, idx) => (
                 <div key={idx} className="whitespace-pre-wrap tracking-wider">

@@ -158,7 +158,9 @@
     --color-on-surface: #fff;
     --color-outline: #333;
     --color-outline-variant: #1a1a1a;
+    --color-secondary: #0f0;
     --color-border: var(--color-outline-variant);
+    --color-ring: var(--color-primary-fixed);
   }
 
   @supports (color: lab(0% 0 0)) {
@@ -488,6 +490,10 @@
     position: relative;
   }
 
+  .static {
+    position: static;
+  }
+
   .sticky {
     position: sticky;
   }
@@ -614,6 +620,10 @@
 
   .z-20 {
     z-index: 20;
+  }
+
+  .z-30 {
+    z-index: 30;
   }
 
   .z-40 {
@@ -1374,6 +1384,10 @@
 
   .touch-none {
     touch-action: none;
+  }
+
+  .resize {
+    resize: both;
   }
 
   .resize-none {
@@ -2440,6 +2454,10 @@
 
   .opacity-70 {
     opacity: .7;
+  }
+
+  .opacity-80 {
+    opacity: .8;
   }
 
   .opacity-90 {
