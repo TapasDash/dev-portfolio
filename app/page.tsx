@@ -93,6 +93,7 @@ export default function Page() {
   const [terminalHistory, setTerminalHistory] = useState<{
     type: 'input' | 'output' | 'error' | 'success';
     text: string;
+    isHtml?: boolean;
   }[]>([
     { type: 'output', text: 'SOVEREIGN OS v4.1.9-STABLE (x86_64-port)' },
     { type: 'output', text: 'INITIALIZING SECURE LINK TO REMOTE HOST...' },
@@ -227,6 +228,7 @@ export default function Page() {
     const newHistory = [...terminalHistory, { type: 'input' as const, text: terminalInput.toUpperCase() }];
     let reply = '';
     let replyType: 'output' | 'error' | 'success' = 'output';
+    let isHtml = false;
 
     // Intercept active self-destruct abort signal
     if (input === 'abort' && reactorStatus === 'countdown') {
@@ -387,10 +389,11 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
           break;
         case 'contact':
           reply = `ESTABLISH SECURE LINK VIA:
-  - EMAIL:    TAPASDASH017@GMAIL.COM
-  - GITHUB:   HTTPS://GITHUB.COM/TAPASDASH
-  - LINKEDIN: HTTPS://WWW.LINKEDIN.COM/IN/TAPAS-DASH-41374A138/`;
+  - EMAIL:    <a href="mailto:tapasdash017@gmail.com" class="underline hover:text-white transition-colors">tapasdash017@gmail.com</a>
+  - GITHUB:   <a href="https://github.com/tapasdash" target="_blank" rel="noopener noreferrer" class="underline hover:text-white transition-colors">https://github.com/tapasdash</a>
+  - LINKEDIN: <a href="https://www.linkedin.com/in/tapas-dash-41374a138/" target="_blank" rel="noopener noreferrer" class="underline hover:text-white transition-colors">https://www.linkedin.com/in/tapas-dash-41374a138/</a>`;
           replyType = 'success';
+          isHtml = true;
           break;
         case 'clear':
           setTerminalHistory([]);
@@ -406,7 +409,7 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
       }
     }
 
-    setTerminalHistory([...newHistory, { type: replyType, text: reply }]);
+    setTerminalHistory([...newHistory, { type: replyType, text: reply, isHtml }]);
     setTerminalInput('');
   };
 
@@ -614,10 +617,10 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
             
             <div className="flex-1 max-w-lg flex flex-col gap-4 w-full">
               <a 
-                href="mailto:TAPASDASH017@GMAIL.COM" 
-                className="border border-outline hover:border-primary-fixed bg-black text-white p-4 flex justify-between items-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] group w-full"
+                href="mailto:tapasdash017@gmail.com" 
+                className="border border-outline hover:border-primary-fixed bg-black text-white p-4 flex justify-between items-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] group w-full normal-case"
               >
-                <span className="tracking-widest truncate mr-4">TAPASDASH017@GMAIL.COM</span>
+                <span className="tracking-widest truncate mr-4">tapasdash017@gmail.com</span>
                 <ArrowRight className="w-4 h-4 text-on-surface-variant group-hover:text-primary-fixed group-hover:translate-x-1 transition-all shrink-0" />
               </a>
               
@@ -627,18 +630,18 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
                   href="https://github.com/tapasdash"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="border border-outline hover:border-primary-fixed hover:text-primary-fixed bg-black text-white p-4 text-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] text-[10px] sm:text-xs truncate font-bold"
+                  className="border border-outline hover:border-primary-fixed hover:text-primary-fixed bg-black text-white p-4 text-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] text-[10px] sm:text-xs truncate font-bold normal-case"
                 >
-                  GITHUB: TAPASDASH
+                  github: tapasdash
                 </a>
 
                 <a
                   href="https://www.linkedin.com/in/tapas-dash-41374a138/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="border border-outline hover:border-primary-fixed hover:text-primary-fixed bg-black text-white p-4 text-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] text-[10px] sm:text-xs truncate font-bold"
+                  className="border border-outline hover:border-primary-fixed hover:text-primary-fixed bg-black text-white p-4 text-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] text-[10px] sm:text-xs truncate font-bold normal-case"
                 >
-                  LINKEDIN
+                  linkedin: tapas-dash
                 </a>
               </div>
             </div>
@@ -655,17 +658,17 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
               href="https://github.com/tapasdash" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-white hover:underline transition-all"
+              className="hover:text-white hover:underline transition-all normal-case"
             >
-              GITHUB
+              github
             </a>
             <a 
               href="https://www.linkedin.com/in/tapas-dash-41374a138/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-white hover:underline transition-all"
+              className="hover:text-white hover:underline transition-all normal-case"
             >
-              LINKEDIN
+              linkedin
             </a>
             <button 
               onClick={() => setIsTerminalOpen(true)}
@@ -704,7 +707,7 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
 
             {/* Terminal Log Console */}
             <div 
-              className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 text-[10px] md:text-xs select-text leading-relaxed font-mono relative"
+              className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 text-[10px] md:text-xs select-text leading-relaxed font-mono relative normal-case"
             >
               {showMatrix && (
                 <MatrixRain onClose={() => setShowMatrix(false)} />
@@ -721,7 +724,11 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
                         ? 'text-white font-bold' 
                         : 'text-primary-fixed'
                   }>
-                    {line.text}
+                    {line.isHtml ? (
+                      <span dangerouslySetInnerHTML={{ __html: line.text }} />
+                    ) : (
+                      line.text
+                    )}
                   </span>
                 </div>
               ))}
