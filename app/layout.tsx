@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark scroll-smooth">
       <body className={`${jetbrainsMono.variable} ${spaceGrotesk.variable} font-mono antialiased text-on-surface bg-black selection:bg-primary-fixed selection:text-black`}>
         <main className="w-full min-h-screen">
           {children}
