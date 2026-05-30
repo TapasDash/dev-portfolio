@@ -1,174 +1,13 @@
 'use client'
 
-import { Shield, ShieldAlert, BadgeCheck, Mail, ArrowRight, Terminal, X } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-
-// Canvas HTML5 Matrix digital rain effect overlay
-function MatrixRain({ onClose }: { onClose: () => void }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationFrameId: number;
-
-    const resizeCanvas = () => {
-      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const alphabet = katakana.split('');
-
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-
-    const rainDrops: number[] = [];
-    for (let x = 0; x < columns; x++) {
-      rainDrops[x] = 1;
-    }
-
-    const draw = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Extract current active theme color variable or fallback
-      const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary-fixed') || '#00FF00';
-      ctx.fillStyle = activeColor.trim();
-      ctx.font = fontSize + 'px monospace';
-
-      for (let i = 0; i < rainDrops.length; i++) {
-        const text = alphabet[Math.floor(Math.random() * alphabet.length)];
-        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-
-        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          rainDrops[i] = 0;
-        }
-        rainDrops[i]++;
-      }
-    };
-
-    const interval = setInterval(draw, 35);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('resize', resizeCanvas);
-    };
-  }, []);
-
-  return (
-    <div className="absolute inset-0 z-20 bg-black overflow-hidden flex flex-col justify-between p-4">
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-80" />
-      <div className="relative z-30 flex justify-between items-center w-full text-[10px] select-none bg-black/60 p-2 border border-primary-fixed/30 backdrop-blur-sm mt-auto">
-        <span className="text-primary-fixed animate-pulse font-bold tracking-widest">// SECURE MATRIX STREAM ACTIVE //</span>
-        <button 
-          onClick={onClose}
-          className="text-black bg-primary-fixed hover:bg-black hover:text-primary-fixed px-3 py-0.5 border border-primary-fixed font-bold transition-all duration-200 cursor-pointer"
-        >
-          [ EXIT_MATRIX ]
-        </button>
-      </div>
-    </div>
-  );
-}
+import { Shield, ShieldAlert, BadgeCheck, ArrowRight, Server, Database, Cpu, Mail, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LeadCaptureModal } from "@/components/LeadCaptureModal";
 
 export default function Page() {
-  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-  const [terminalInput, setTerminalInput] = useState('');
   const [timeString, setTimeString] = useState('');
-  const [activeTheme, setActiveTheme] = useState('green');
-  const [showMatrix, setShowMatrix] = useState(false);
-  
-  // Sudo reactor countdown state
-  const [reactorStatus, setReactorStatus] = useState<'nominal' | 'countdown' | 'crash'>('nominal');
-  const [countdownTimer, setCountdownTimer] = useState(5);
-  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Terminal interaction history state
-  const [terminalHistory, setTerminalHistory] = useState<{
-    type: 'input' | 'output' | 'error' | 'success';
-    text: string;
-    isHtml?: boolean;
-  }[]>([
-    { type: 'output', text: 'SOVEREIGN OS v4.1.9-STABLE (x86_64-port)' },
-    { type: 'output', text: 'INITIALIZING SECURE LINK TO REMOTE HOST...' },
-    { type: 'output', text: 'CONNECTION ESTABLISHED VIA ENCRYPTED PORT 3005.' },
-    { type: 'output', text: 'TYPE "HELP" FOR A LIST OF SECURE SYSTEM COMMANDS.' },
-    { type: 'output', text: '---------------------------------------------------' }
-  ]);
-
-  const terminalEndRef = useRef<HTMLDivElement>(null);
-
-  // Update theme colors dynamically on document node
-  useEffect(() => {
-    const root = document.documentElement;
-    if (activeTheme === 'green') {
-      root.style.setProperty('--color-primary-fixed', '#00FF00');
-      root.style.setProperty('--color-ring', '#00FF00');
-      root.style.setProperty('--color-secondary', '#00FF00');
-    } else if (activeTheme === 'amber') {
-      root.style.setProperty('--color-primary-fixed', '#FFB000');
-      root.style.setProperty('--color-ring', '#FFB000');
-      root.style.setProperty('--color-secondary', '#FFB000');
-    } else if (activeTheme === 'cyan') {
-      root.style.setProperty('--color-primary-fixed', '#00E5FF');
-      root.style.setProperty('--color-ring', '#00E5FF');
-      root.style.setProperty('--color-secondary', '#00E5FF');
-    } else if (activeTheme === 'pink') {
-      root.style.setProperty('--color-primary-fixed', '#FF007F');
-      root.style.setProperty('--color-ring', '#FF007F');
-      root.style.setProperty('--color-secondary', '#FF007F');
-    }
-  }, [activeTheme]);
-
-  // Sudo Reactor Self-Destruct Countdown loop hook
-  useEffect(() => {
-    if (reactorStatus === 'countdown') {
-      countdownIntervalRef.current = setInterval(() => {
-        setCountdownTimer(prev => {
-          if (prev <= 1) {
-            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
-            setReactorStatus('crash');
-            setTerminalHistory(prevHistory => [
-              ...prevHistory,
-              { type: 'error', text: `[CRITICAL FAILURE] REACTOR CONTAINER SHIELD FLUID DISCHARGED.` },
-              { type: 'error', text: `\n===================================================\n[SYSTEM CRASH] BOOTING SECURE BIO-SHELL BIOS v0.1\n===================================================\nREACTOR SYSTEM SHIELD: INOPERATIVE.\nSYSTEM CORE INTEGRITY: TERMINATED.\n\nTYPE "RELOAD" TO BOOT SYSTEM CORE BACK ONLINE.\n===================================================` }
-            ]);
-            return 0;
-          } else {
-            const nextVal = prev - 1;
-            setTerminalHistory(prevHistory => [
-              ...prevHistory,
-              { type: 'error', text: `[DANGER] MOCK SELF-DESTRUCT IN ${nextVal} SECONDS...` }
-            ]);
-            return nextVal;
-          }
-        });
-      }, 1000);
-    } else {
-      if (countdownIntervalRef.current) {
-        clearInterval(countdownIntervalRef.current);
-      }
-    }
-
-    return () => {
-      if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
-    };
-  }, [reactorStatus]);
-
-  // Auto-scroll terminal history to bottom
-  useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollTop = terminalEndRef.current.scrollHeight;
-    }
-  }, [terminalHistory, showMatrix]);
-
-  // Update timezone clock
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -179,372 +18,131 @@ export default function Page() {
     return () => clearInterval(interval);
   }, []);
 
-  // Keyboard shortcut listener: Escape closes terminal, Backtick (`) toggles terminal
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '`') {
-        e.preventDefault();
-        setIsTerminalOpen(prev => !prev);
-      }
-      if (e.key === 'Escape' && isTerminalOpen) {
-        setIsTerminalOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isTerminalOpen]);
-
-  // Handle submit in interactive terminal shell
-  const handleTerminalSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const input = terminalInput.trim().toLowerCase();
-    if (!input) return;
-
-    // Command interceptor if bios crashed
-    if (reactorStatus === 'crash') {
-      if (input === 'reload') {
-        setReactorStatus('nominal');
-        setTerminalHistory([
-          { type: 'success', text: 'SYSTEM CORE BOOT BOOTSTRAP INITIATED...' },
-          { type: 'success', text: 'BIOS SELF-DIAGNOSTIC SYSTEM INVENTORY: 100% OK.' },
-          { type: 'success', text: 'RE-ATTACHING SECURE GRID ADAPTER SHIELD...' },
-          { type: 'output', text: 'SOVEREIGN OS v4.1.9-STABLE (x86_64-port)' },
-          { type: 'output', text: 'INITIALIZING SECURE LINK TO REMOTE HOST...' },
-          { type: 'output', text: 'CONNECTION ESTABLISHED VIA ENCRYPTED PORT 3005.' },
-          { type: 'output', text: 'TYPE "HELP" FOR A LIST OF SECURE SYSTEM COMMANDS.' },
-          { type: 'output', text: '---------------------------------------------------' }
-        ]);
-      } else {
-        setTerminalHistory(prev => [
-          ...prev, 
-          { type: 'input', text: terminalInput.toUpperCase() },
-          { type: 'error', text: 'SYSTEM TERMINAL OFFLINE. INPUT "RELOAD" TO REBOOT INTERFACE.' }
-        ]);
-      }
-      setTerminalInput('');
-      return;
-    }
-
-    const newHistory = [...terminalHistory, { type: 'input' as const, text: terminalInput.toUpperCase() }];
-    let reply = '';
-    let replyType: 'output' | 'error' | 'success' = 'output';
-    let isHtml = false;
-
-    // Intercept active self-destruct abort signal
-    if (input === 'abort' && reactorStatus === 'countdown') {
-      setReactorStatus('nominal');
-      setTerminalHistory([...newHistory, {
-        type: 'success',
-        text: `[OVERRIDE SHIELD CONFIRMED]
-REACTOR SYSTEM SHIELD MOCK CRITICAL SHIELD ACTIVE.
-ABORT DESTRUCT PROCESS CONFIRMED.
-SAFE ENVIRONMENTAL RESTORED. CORE ENGINE STABILIZED.`
-      }]);
-      setTerminalInput('');
-      return;
-    }
-
-    // Dynamic start-width parses
-    if (input.startsWith('theme ')) {
-      const selectedColor = input.replace('theme ', '').trim();
-      if (['green', 'amber', 'cyan', 'pink'].includes(selectedColor)) {
-        setActiveTheme(selectedColor);
-        reply = `ACCENT PALETTE INSTANTLY TRANSITIONED TO ${selectedColor.toUpperCase()} retro accent. SUCCESS.`;
-        replyType = 'success';
-      } else {
-        reply = `THEME ACCENT "${selectedColor.toUpperCase()}" NOT REGISTERED. AVAILABLE PALETTES: GREEN, AMBER, CYAN, PINK.`;
-        replyType = 'error';
-      }
-    } 
-    else if (input.startsWith('sudo')) {
-      const commandAfterSudo = input.replace('sudo', '').trim();
-      if (commandAfterSudo.startsWith('rm -rf') || commandAfterSudo.includes('destruct') || commandAfterSudo === '') {
-        setReactorStatus('countdown');
-        setCountdownTimer(5);
-        reply = `[CRITICAL WARNING] PRIVILEGED ACCESS GRANTED.
-[ALERT] SYSTEM REACTOR CORE OVERLOAD INITIATED!
-[DANGER] MOCK SELF-DESTRUCT IN 5 SECONDS...
-[ACTION REQUIRED] INPUT "ABORT" TO OVERRIDE CORRUPTION DESTRUCTION.`;
-        replyType = 'error';
-      } else {
-        reply = `[ACCESS CONTROL] COMMAND "${commandAfterSudo.toUpperCase()}" REQUIRES ENCRYPTED CREDENTIALS. PERMISSION DENIED.`;
-        replyType = 'error';
-      }
-    } 
-    else if (input.startsWith('msg ')) {
-      const parts = input.slice(4).split(' ');
-      const senderEmail = parts[0];
-      const content = parts.slice(1).join(' ');
-
-      if (!senderEmail || !content) {
-        reply = `CORRESPONDENCE PIPELINE DISPATCH ERROR.
-USAGE: MSG <EMAIL> <YOUR_MESSAGE_CONTENT>
-EXAMPLE: MSG RECRUITER@MICROSOFT.COM INTERESTED IN HIRING FOR REVENUE SYSTEMS`;
-        replyType = 'error';
-      } else {
-        reply = `PARSING DISPATCH SECURE PAYLOAD...
-SENDER: ${senderEmail.toUpperCase()}
-CONTENT: ${content.toUpperCase()}
-TRANSMITTING CORRESPONDENCE DATA PACKET...`;
-        replyType = 'output';
-        
-        // Trigger asynchronous fetch call
-        fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: `CLI Operator [${senderEmail}]`, email: senderEmail, message: content })
-        })
-        .then(res => {
-          if (res.ok) {
-            setTerminalHistory(prev => [...prev, { type: 'success', text: `[SUCCESS] PAYLOAD SECURELY DEPOSITED INTO TAPAS' INBOX.` }]);
-          } else {
-            setTerminalHistory(prev => [...prev, { type: 'error', text: `[ERROR] DATA ROUTING FAILURE. CODE RESEND_API_REFUSED.` }]);
-          }
-        })
-        .catch(() => {
-          setTerminalHistory(prev => [...prev, { type: 'error', text: `[ERROR] LOCAL ROUTE UNREACHABLE. DISPATCH CANCELLED.` }]);
-        });
-      }
-    }
-    else {
-      // Standard static matching commands switch
-      switch (input) {
-        case 'help':
-          reply = `AVAILABLE SYSTEM UTILITIES:
-  HELP              - DISPLAY THIS ACTIVE DIRECTORY
-  ABOUT             - RETRIEVE OPERATOR PROFILE & PHILOSOPHY
-  PROJECTS          - RETRIEVE ARCHIVED SYSTEM ARCHITECTURES
-  TIMELINE          - RETRIEVE CHRONOLOGICAL EXP LOGS
-  SKILLS            - GRAPH CORE ENGINE SKILL GRAPHS
-  THEME <COLOR>     - SWITCH THEME ACCENTS (GREEN, AMBER, CYAN, PINK)
-  NEOFETCH          - RETRIEVE CHASSIS SYSTEM SPECIFICATIONS
-  MATRIX            - STREAM RETRO MATRIX CODE ON INTERFACE
-  MSG <EMAIL> <MSG> - TRANSMIT SECURE CLI CORRESPONDENCE
-  SUDO RM -RF /     - PRIVILEGED OPERATOR ACTION (PROCEED CAUTIOUSLY)
-  CLEAR             - PURGE CONSOLE TERMINAL BUFFER
-  EXIT              - TERMINATE SECURE SHELL SESSION`;
-          break;
-        case 'about':
-          reply = `OPERATOR DOSSIER:
-  NAME: TAPAS DASH
-  ROLE: REVENUE-FOCUSED TECHNOLOGIST & LEAD ENGINEER
-  MISSION: DESIGNING SOFTWARE ARCHITECTURE FOR MAXIMUM FISCAL IMPACT.
-  PHILOSOPHY: "IF CODE DOES NOT CONTRIBUTE TO THE REVENUE ENGINE, IT IS AN ELIMINABLE EXPENSE."`;
-          replyType = 'success';
-          break;
-        case 'projects':
-          reply = `PROJECT RECORD INTEGRITY CHECK: SECURE.
-
-[PROJECT 01/03] - FINTECH SECURITY
-  - DESCRIPTION: HARDENED INFRASTRUCTURE FOR ASSET MANAGEMENT & CRYPTO VALIDATION.
-  - STACK: NODE.JS // AWS // POSTGRESQL
-
-[PROJECT 02/03] - HR COMPLIANCE
-  - DESCRIPTION: AUTOMATED REGULATORY COMPLIANCE SYSTEM AT SCALE.
-  - STACK: TYPESCRIPT // NEXT.JS // TESTING
-
-[PROJECT 03/03] - ELITE JOB BOARD
-  - DESCRIPTION: MACHINE-LEARNING MATCHING ENGINE OPTIMIZED FOR PIPELINE CONVERSIONS.
-  - STACK: OPENAI // NEXT.JS // AWS`;
-          replyType = 'success';
-          break;
-        case 'timeline':
-          reply = `DEPLOYMENT TIMELINE DECRYPTED:
-
-  [PRESENT] LEAD ENGINEER @ TECHYPE
-            - ARCHITECTING REVENUE-CRITICAL PLATFORMS AND REFACTORS.
-  [2023-24] SENIOR DEV @ REAL11 FANTASY SPORTS
-            - PLATFORM ENGINEERING FOR HIGH-CONCURRENCY TRANSACTIONAL INTEGRITY.
-  [2021-23] SOFTWARE ENG @ THINK FUTURE TECHNOLOGIES
-            - SYSTEM MODERNIZATION & SOLUTION ARCHITECTURE.
-  [EARLIER] DEVELOPER @ THEFLAK
-            - FOUNDATIONAL WEB AND CONVERSION PIPELINE DEVELOPMENT.`;
-          break;
-        case 'skills':
-          reply = `OPERATOR CORE COMPETENCIES:
-  
-  SYSTEMS ARCHITECTURE  [██████████████░░] 85%
-  REVENUE OPTIMIZATION  [███████████████░] 90%
-  NEXT.JS / REACT 19    [████████████████] 100%
-  BACKEND & AWS SEC     [██████████████░░] 85%
-  DATABASE SCALING      [████████████░░░░] 75%`;
-          replyType = 'success';
-          break;
-        case 'neofetch':
-          reply = `
-    _______      OPERATOR: TAPAS DASH
-   |.-----.|     ROLE: REVENUE-FOCUSED TECHNOLOGIST
-   ||     ||     OS: SOVEREIGN.OS v4.1.9
-   ||_____||     SHELL: ANTIGRAVITY-ZSH
-   |_/___\\\\_|     THEME: ${activeTheme.toUpperCase()} ACCENT
-   /########\\\\    UPTIME: ${Math.floor(performance.now() / 1000)}s
-  /##########\\\\   COMPILER: NEXT.JS 16 // TURBOPACK
-`;
-          replyType = 'success';
-          break;
-        case 'matrix':
-          setShowMatrix(true);
-          reply = 'INITIALIZING MATRIX DIGITAL CODE RAIN SIMULATION ON LAYER 2...';
-          replyType = 'success';
-          break;
-        case 'contact':
-          reply = `ESTABLISH SECURE LINK VIA:
-  - EMAIL:    <a href="mailto:tapasdash017@gmail.com" class="underline hover:text-white transition-colors">tapasdash017@gmail.com</a>
-  - GITHUB:   <a href="https://github.com/tapasdash" target="_blank" rel="noopener noreferrer" class="underline hover:text-white transition-colors">https://github.com/tapasdash</a>
-  - LINKEDIN: <a href="https://www.linkedin.com/in/tapas-dash-41374a138/" target="_blank" rel="noopener noreferrer" class="underline hover:text-white transition-colors">https://www.linkedin.com/in/tapas-dash-41374a138/</a>`;
-          replyType = 'success';
-          isHtml = true;
-          break;
-        case 'clear':
-          setTerminalHistory([]);
-          setTerminalInput('');
-          return;
-        case 'exit':
-          setIsTerminalOpen(false);
-          setTerminalInput('');
-          return;
-        default:
-          reply = `COMMAND NOT FOUND: "${input.toUpperCase()}". TYPE "HELP" FOR A LIST OF VALID COMMANDS.`;
-          replyType = 'error';
-      }
-    }
-
-    setTerminalHistory([...newHistory, { type: replyType, text: reply, isHtml }]);
-    setTerminalInput('');
-  };
-
   return (
-    <div className="w-full min-h-screen bg-black text-on-surface font-mono uppercase tracking-widest text-[10px] sm:text-xs leading-relaxed monitor-scanline relative selection:bg-primary-fixed selection:text-black">
+    <div className="w-full min-h-screen bg-surface text-on-surface relative overflow-x-hidden">
       
-      {/* Sticky Top HUD Header */}
-      <nav className="sticky top-0 z-40 bg-black/95 backdrop-blur-md border-b border-outline px-4 sm:px-8 py-3 flex justify-between items-center text-[10px] sm:text-xs tracking-widest text-primary-fixed font-mono select-none">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-primary-fixed animate-ping rounded-full" />
-            <span className="font-bold text-white">SOVEREIGN.OS</span>
-          </div>
-          <span className="hidden md:inline text-on-surface-variant font-normal">|</span>
-          <span className="hidden md:inline text-on-surface-variant">OP_ID: REVENUE_TECH</span>
+      {/* Premium Glass Header Navigation */}
+      <nav className="sticky top-0 z-40 w-full bg-surface/80 backdrop-blur-md border-b border-outline px-6 py-4 flex justify-between items-center select-none">
+        <div className="flex items-center gap-2">
+          <span className="font-display font-bold text-lg text-white tracking-tight">TAPAS DASH</span>
+          <span className="text-primary-fixed/80 text-[10px] font-mono border border-primary-fixed/20 px-2 py-0.5 rounded-full bg-primary-fixed/5 font-semibold">/ AI ARCHITECT</span>
         </div>
 
-        <div className="hidden sm:flex items-center gap-4 md:gap-6 text-on-surface-variant">
-          <a href="#hero" className="hover:text-primary-fixed transition-colors font-bold">[ HOME ]</a>
-          <a href="#philosophy" className="hover:text-primary-fixed transition-colors font-bold">[ PHILOSOPHY ]</a>
-          <a href="#track-record" className="hover:text-primary-fixed transition-colors font-bold">[ PROJECTS ]</a>
-          <a href="#timeline" className="hover:text-primary-fixed transition-colors font-bold">[ TIMELINE ]</a>
-          <a href="#contact" className="hover:text-primary-fixed transition-colors font-bold">[ CONNECT ]</a>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface-variant">
+          <a href="#hero" className="hover:text-white transition-colors">Home</a>
+          <a href="#value" className="hover:text-white transition-colors">Value</a>
+          <a href="#track-record" className="hover:text-white transition-colors">Projects</a>
+          <a href="#timeline" className="hover:text-white transition-colors">Services</a>
+          <a href="#contact" className="hover:text-white transition-colors">Connect</a>
         </div>
 
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsTerminalOpen(true)}
-            className="flex items-center gap-1.5 border border-primary-fixed/40 bg-primary-fixed/5 hover:bg-primary-fixed hover:text-black px-2.5 py-1 text-[9px] sm:text-[10px] text-primary-fixed font-bold tracking-wider transition-all duration-200 cursor-pointer"
-          >
-            <Terminal className="w-3.5 h-3.5" />
-            <span>TERMINAL.EXE</span>
-          </button>
-          <span className="hidden lg:inline text-on-surface-variant">{timeString}</span>
+        <div className="flex items-center gap-4 text-xs font-mono text-on-surface-variant">
+          <span className="hidden sm:inline border-l border-outline pl-4">{timeString} UTC</span>
         </div>
       </nav>
 
       {/* Main Container Wrapper */}
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 md:px-12 py-12 md:py-24">
-
-        {/* Top Header Information Panel */}
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-primary-fixed mb-20 md:mb-28 gap-4 border-b border-outline/30 pb-6">
-          <div>OPERATOR_ID: REVENUE_TECHNOLOGIST</div>
-          <div className="flex items-center gap-6">
-            <span>LOCATION: REMOTE_US</span>
-            <div className="flex gap-2">
-              <div className="w-3 h-2 bg-primary-fixed" />
-              <div className="w-4 h-2 bg-primary-fixed opacity-50" />
-              <div className="w-2 h-2 bg-primary-fixed" />
-            </div>
-          </div>
-        </header>
+      <main className="w-full max-w-5xl mx-auto px-6 sm:px-8 md:px-12 py-16 md:py-28 flex flex-col gap-24 md:gap-36">
 
         {/* Hero Section */}
-        <section id="hero" className="mb-24 md:mb-32 scroll-mt-24">
-          <div className="flex items-center gap-2 text-primary-fixed mb-8">
-            <div className="w-2 h-2 bg-primary-fixed animate-pulse-block" />
+        <section id="hero" className="scroll-mt-24 flex flex-col gap-10">
+          <div className="flex items-center gap-2.5 text-xs text-primary-fixed font-mono font-semibold tracking-wider uppercase">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-fixed opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-fixed"></span>
+            </span>
             <span>SYSTEM STATUS: OPERATIONAL</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-bold tracking-tighter leading-[0.9] text-white mb-16 uppercase">
-            THE DEVELOPER WHO CARES<br />
-            MORE ABOUT YOUR <br className="hidden sm:block" />
-            <span className="text-primary-fixed">CUSTOMERS</span> THAN MY CODE
-          </h1>
+          <div className="flex flex-col gap-6 max-w-3xl">
+            <h1 className="text-5xl sm:text-7xl md:text-8xl font-display font-bold tracking-tight leading-[0.95] text-white">
+              AI Agentic Systems<br />
+              <span className="gradient-text-accent">Architecture.</span>
+            </h1>
+            
+            <h2 className="text-xl sm:text-3xl font-display font-medium text-white/95 mt-2 leading-snug">
+              I replace manual operations with autonomous AI pipelines.
+            </h2>
 
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12">
-            <div className="max-w-md text-on-surface-variant text-[11px] sm:text-xs leading-relaxed">
-              EXECUTION OF HIGH-PRECISION SOFTWARE ARCHITECTURE DESIGNED FOR MAXIMUM FISCAL IMPACT. REJECTING GENERIC SOLUTIONS IN FAVOR OF MISSION-CRITICAL PERFORMANCE.
-            </div>
-            <div className="text-left md:text-right">
-              <div className="text-on-surface-variant mb-1 text-[10px]">SUBJECT NAME</div>
-              <div className="text-2xl font-display font-bold text-white tracking-widest">TAPAS DASH</div>
-            </div>
+            <p className="text-on-surface-variant text-sm sm:text-base leading-relaxed font-sans normal-case">
+              Most tech companies slap a UI on ChatGPT. I build the backend logic. I pull LLMs out of the chatbox, architect complex DAG workflows, and build heavy RAG pipelines.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 mt-4">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-primary-fixed hover:bg-primary-fixed/90 text-surface font-semibold px-6 py-3 rounded-lg text-sm transition-all shadow-lg hover:shadow-primary-fixed/20 flex items-center gap-2 font-display"
+            >
+              Request Architecture Audit
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <a 
+              href="#track-record" 
+              className="border border-outline hover:border-on-surface-variant text-on-surface px-6 py-3 rounded-lg text-sm transition-all flex items-center gap-2 font-display"
+            >
+              Case Studies
+            </a>
           </div>
         </section>
 
-        <hr className="border-t border-outline my-16 opacity-30" />
-
-        {/* Philosophy Section */}
-        <section id="philosophy" className="mb-24 md:mb-32 scroll-mt-24">
-          <div className="text-primary-fixed mb-8 font-bold">
-            // PHILOSOPHY.SYS
+        {/* The Pitch (About Me) */}
+        <section id="value" className="scroll-mt-24 glass-card p-8 md:p-12 rounded-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="flex flex-col gap-6 max-w-3xl relative z-10">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-primary-fixed">THE PITCH</span>
+            
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
+              Stop scaling headcount. Scale infrastructure.
+            </h2>
+            
+            <p className="text-on-surface-variant text-sm sm:text-base leading-relaxed font-sans normal-case">
+              I pull LLMs out of the chatbox and build the actual backend logic. I architect complex DAG workflows and heavy RAG pipelines using strict, pure functional Node.js. No classes. No OOP bloat. Just stateless logic handling massive WebSocket traffic without dropping connections.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-display font-bold italic tracking-tight leading-[1.1] text-white max-w-4xl">
-            "I DON'T JUST SHIP FEATURES. I OPTIMIZE FOR THE BOTTOM LINE. IF THE CODE DOESN'T CONTRIBUTE TO THE REVENUE ENGINE, IT IS TECHNICAL DEBT."
-          </h2>
         </section>
 
-        {/* Track Record */}
-        <section id="track-record" className="mb-24 md:mb-32 scroll-mt-24">
-          <div className="flex flex-col sm:flex-row justify-between items-baseline mb-12 gap-4">
-            <h2 className="text-3xl font-display font-bold text-white tracking-tight">TRACK RECORD</h2>
-            <div className="text-on-surface-variant">[ DEPLOYMENT_HISTORY ]</div>
+        {/* Proof of Work (Case Study) */}
+        <section id="track-record" className="scroll-mt-24 flex flex-col gap-12">
+          <div className="flex flex-col sm:flex-row justify-between items-baseline gap-4 border-b border-outline pb-6">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">Proof of Work</h2>
+            <div className="text-on-surface-variant text-xs sm:text-sm font-mono">[ CASE STUDY: AUTOMATING A RECRUITING AGENCY ]</div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                title: "FINTECH SECURITY",
-                id: "01/03",
-                icon: ShieldAlert,
-                desc: "HARDENED INFRASTRUCTURE FOR ASSET MANAGEMENT AND CRYPTOGRAPHIC TRANSACTION VALIDATION.",
-                tags: ["NODE.JS", "AWS", "POSTGRESQL"],
+                title: "The Brain",
+                icon: Cpu,
+                desc: "Designed an autonomous agentic DAG using Mastra and Gemini 1.5 Flash.",
+                tags: ["MASTRA", "GEMINI 1.5 FLASH", "DAG"],
               },
               {
-                title: "HR COMPLIANCE",
-                id: "02/03",
-                icon: BadgeCheck,
-                desc: "AUTOMATED REGULATORY REPORTING AND EMPLOYEE DATA VERIFICATION SYSTEMS AT SCALE.",
-                tags: ["TYPESCRIPT", "NEXT.JS", "TESTING"],
+                title: "The Data",
+                icon: Database,
+                desc: "Built a RAG pipeline to dynamically fetch, contextualize, and score candidate profiles.",
+                tags: ["RAG", "VECTOR DB", "EMBEDDINGS"],
               },
               {
-                title: "ELITE JOB BOARD",
-                id: "03/03",
-                icon: Shield,
-                desc: "AI-DRIVEN MATCHING ENGINE FOR HIGH-VALUABILITY CANDIDATE ACQUISITION PIPELINES.",
-                tags: ["OPENAI", "NEXT.JS", "AWS"],
+                title: "The Voice",
+                icon: Server,
+                desc: "Engineered a sub-800ms voice screening agent using Vapi and WebSockets.",
+                tags: ["VAPI", "WEBSOCKETS", "REAL-TIME"],
               },
-            ].map((item) => (
+            ].map((item, index) => (
               <div 
-                key={item.id} 
-                className="border border-outline p-6 flex flex-col justify-between h-full bg-black/40 backdrop-blur-sm hover:border-primary-fixed hover:-translate-y-1.5 hover:shadow-[0_0_20px_rgba(0,255,0,0.1)] transition-all duration-300 relative overflow-hidden group"
+                key={index} 
+                className="glass-card p-6 rounded-xl flex flex-col justify-between h-full hover:-translate-y-1.5 transition-all duration-300 relative group"
               >
-                {/* Visual Scanner Sweep overlay */}
-                <div className="absolute inset-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary-fixed/20 to-transparent -translate-y-full group-hover:animate-sweep pointer-events-none" />
-
-                <div className="flex justify-between items-center mb-12 text-primary-fixed">
-                  <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-on-surface-variant text-[10px] group-hover:text-primary-fixed transition-colors font-bold">{item.id}</span>
+                <div className="flex justify-between items-center mb-10 text-primary-fixed">
+                  <item.icon className="w-6 h-6" />
+                  <span className="text-on-surface-variant text-xs font-mono font-semibold">0{index + 1}/03</span>
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 tracking-wider group-hover:text-primary-fixed transition-colors">{item.title}</h3>
-                  <p className="text-on-surface-variant text-[10px] leading-relaxed mb-8">
+                  <h3 className="text-lg font-bold text-white mb-3 font-display">{item.title}</h3>
+                  <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6 font-sans normal-case">
                     {item.desc}
                   </p>
                 </div>
@@ -553,7 +151,7 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
                   {item.tags.map(tag => (
                     <span 
                       key={tag} 
-                      className="border border-primary-fixed/20 bg-primary-fixed/5 text-primary-fixed hover:bg-primary-fixed/20 hover:border-primary-fixed/40 transition-all duration-200 px-2 py-0.5 font-bold text-[9px] tracking-wider rounded-none select-none"
+                      className="border border-outline bg-surface-variant/50 text-primary-fixed px-2 py-0.5 rounded text-[9px] font-mono tracking-wider"
                     >
                       {tag}
                     </span>
@@ -562,216 +160,118 @@ TRANSMITTING CORRESPONDENCE DATA PACKET...`;
               </div>
             ))}
           </div>
-        </section>
 
-        {/* Deployment Timeline */}
-        <section id="timeline" className="mb-24 md:mb-32 scroll-mt-24">
-          <div className="flex flex-col sm:flex-row justify-between items-baseline mb-12 gap-4">
-            <h2 className="text-3xl font-display font-bold text-white tracking-tight">DEPLOYMENT TIMELINE</h2>
-            <div className="text-on-surface-variant flex items-center gap-2">
-               ARCHIVE_ID <span className="text-primary-fixed">[ LIVE_SESSION ]</span>
+          <div className="border border-primary-fixed/20 bg-primary-fixed/5 p-6 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <span className="text-primary-fixed font-bold tracking-widest text-[10px] font-mono block mb-1">EXECUTION RESULT</span>
+              <p className="text-white text-xs sm:text-sm tracking-wider leading-relaxed font-sans normal-case">
+                The Result: Agent conducts technical screens and fires webhooks with scores directly to the database.
+              </p>
+            </div>
+            <div className="shrink-0 text-primary-fixed font-mono font-bold text-xs border border-primary-fixed/20 px-3 py-1 rounded bg-primary-fixed/5">
+              STATUS: ACTIVE
             </div>
           </div>
+        </section>
 
-          <div className="space-y-8 relative before:absolute before:left-[10px] before:top-2 before:bottom-2 before:w-[1px] before:bg-outline/30">
+        {/* Services (The Offer) */}
+        <section id="timeline" className="scroll-mt-24 flex flex-col gap-12">
+          <div className="flex flex-col sm:flex-row justify-between items-baseline gap-4 border-b border-outline pb-6">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">Services</h2>
+            <div className="text-on-surface-variant text-xs sm:text-sm font-mono">[ ACTIVE RETAINERS ]</div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { role: "PRESENT // LEAD_ENGINEER", company: "TECHYPE", desc: "ARCHITECTING REVENUE-CRITICAL SYSTEMS AND MANAGING TECHNICAL DEBT MITIGATION STRATEGIES.", active: true },
-              { role: "2023 - 2024 // SENIOR_DEV", company: "REAL11 FANTASY SPORTS", desc: "HIGH-CONCURRENCY PLATFORM ENGINEERING FOR REAL-TIME SPORTS DATA AND TRANSACTIONAL INTEGRITY.", active: false },
-              { role: "2021 - 2023 // SOFTWARE_ENG", company: "THINK FUTURE TECHNOLOGIES", desc: "ENTERPRISE-GRADE SOLUTION ARCHITECTURE AND LEGACY SYSTEM MODERNIZATION.", active: false },
-              { role: "EARLY_CAREER // DEVELOPER", company: "THEFLAK", desc: "FOUNDATIONAL WEB DEVELOPMENT WITH A FOCUS ON CLIENT CONVERSION METRICS.", active: false },
-            ].map((job, i) => (
-              <div key={i} className="flex flex-col lg:flex-row justify-between items-start gap-4 group relative">
-                <div className="flex gap-6 w-full lg:w-3/4">
-                  {/* Glowing, styled active indicators instead of empty brackets */}
-                  <div className="mt-1 shrink-0 font-bold select-none z-10 bg-black text-[10px] sm:text-xs">
-                    {job.active ? (
-                      <span className="text-primary-fixed animate-pulse shadow-[0_0_8px_rgba(0,255,0,0.4)]">[▶]</span>
-                    ) : (
-                      <span className="text-outline group-hover:text-primary-fixed transition-colors">[✓]</span>
+              { 
+                title: "AI INFRASTRUCTURE RETAINER", 
+                desc: "Direct-to-architecture integration for US and EU teams. Zero employment overhead.", 
+                active: true 
+              },
+              { 
+                title: "AUTONOMOUS RAG/DAG PIPELINES", 
+                desc: "Dynamic data retrieval and workflow execution.", 
+                active: false 
+              },
+              { 
+                title: "REAL-TIME VOICE AGENTS", 
+                desc: "Sub-800ms inbound/outbound voice infrastructure.", 
+                active: false 
+              },
+            ].map((service, index) => (
+              <div 
+                key={index} 
+                className={`glass-card p-6 rounded-xl flex flex-col justify-between h-full border ${service.active ? 'border-primary-fixed/20 shadow-[0_0_20px_rgba(0,242,254,0.05)]' : 'border-outline'} hover:-translate-y-1.5 transition-all duration-300`}
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="text-[10px] font-mono text-on-surface-variant">SERVICE 0{index + 1}</span>
+                    {service.active && (
+                      <span className="text-[9px] font-mono text-primary-fixed bg-primary-fixed/10 px-2 py-0.5 rounded-full font-bold">RECOMMENDED</span>
                     )}
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white tracking-widest mb-2 group-hover:text-primary-fixed transition-colors duration-200">{job.company}</h3>
-                    <div className="text-on-surface-variant max-w-2xl text-[10px] leading-relaxed">
-                      {job.desc}
-                    </div>
-                  </div>
-                </div>
-                <div className={`text-[10px] md:text-xs font-bold shrink-0 pl-10 lg:pl-0 ${job.active ? 'text-primary-fixed' : 'text-on-surface-variant group-hover:text-white transition-colors duration-200'}`}>
-                  {job.role}
+                  <h3 className="text-lg font-bold text-white mb-3 font-display">{service.title}</h3>
+                  <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed font-sans normal-case">
+                    {service.desc}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Establish Connection */}
-        <section id="contact" className="mb-24 md:mb-32 border border-outline p-6 md:p-12 bg-black/35 backdrop-blur-sm scroll-mt-24 hover:border-primary-fixed/40 transition-colors duration-300">
-          <div className="flex flex-col lg:flex-row gap-12 justify-between">
-            <div className="max-w-sm">
-              <h2 className="text-3xl font-display font-bold text-white tracking-tight mb-6">ESTABLISH<br />CONNECTION</h2>
-              <p className="text-on-surface-variant leading-relaxed text-[11px] sm:text-xs">
-                I AM CURRENTLY SELECTIVE ABOUT NEW ENGAGEMENTS. IF YOUR VENTURE REQUIRES HIGH-PRECISION REVENUE TECHNOLOGY, INITIALIZE CONTACT.
+        {/* Call to Action */}
+        <section id="contact" className="scroll-mt-24 border border-outline rounded-2xl p-8 md:p-14 bg-surface-container relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary-fixed/5 rounded-full blur-[100px] pointer-events-none" />
+          
+          <div className="flex flex-col lg:flex-row gap-12 justify-between items-center relative z-10">
+            <div className="max-w-md flex flex-col gap-4 text-center lg:text-left">
+              <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">Audit Your Manual Workflows</h2>
+              <p className="text-on-surface-variant leading-relaxed text-xs sm:text-sm normal-case font-sans">
+                Send me your most labor-intensive process. I will send you a 90-second Loom architectural teardown detailing exactly how a stateless Node.js pipeline replaces it.
               </p>
             </div>
             
-            <div className="flex-1 max-w-lg flex flex-col gap-4 w-full">
-              <a 
-                href="mailto:tapasdash017@gmail.com" 
-                className="border border-outline hover:border-primary-fixed bg-black text-white p-4 flex justify-between items-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] group w-full normal-case"
+            <div className="shrink-0 w-full lg:w-auto">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="bg-primary-fixed hover:bg-primary-fixed/90 text-surface font-semibold px-8 py-4 rounded-xl text-sm transition-all shadow-lg hover:shadow-primary-fixed/20 flex items-center justify-center gap-2 font-display text-center w-full"
               >
-                <span className="tracking-widest truncate mr-4">tapasdash017@gmail.com</span>
-                <ArrowRight className="w-4 h-4 text-on-surface-variant group-hover:text-primary-fixed group-hover:translate-x-1 transition-all shrink-0" />
-              </a>
-              
-              {/* Stack vertically on mobile, grid-cols-2 on tablet/desktop */}
-              <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 w-full">
-                <a
-                  href="https://github.com/tapasdash"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border border-outline hover:border-primary-fixed hover:text-primary-fixed bg-black text-white p-4 text-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] text-[10px] sm:text-xs truncate font-bold normal-case"
-                >
-                  github: tapasdash
-                </a>
-
-                <a
-                  href="https://www.linkedin.com/in/tapas-dash-41374a138/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border border-outline hover:border-primary-fixed hover:text-primary-fixed bg-black text-white p-4 text-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,0,0.05)] text-[10px] sm:text-xs truncate font-bold normal-case"
-                >
-                  linkedin: tapas-dash
-                </a>
-              </div>
+                Request Architecture Audit
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 border-t border-outline text-[9px] sm:text-[10px] w-full">
-          <div className="text-primary-fixed text-center sm:text-left">
-            © 2024 SOVEREIGN_OPERATOR // ALL RIGHTS RESERVED
+        <footer className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 border-t border-outline text-xs text-on-surface-variant select-none w-full">
+          <div>
+            © 2026 TAPAS DASH. ALL RIGHTS RESERVED.
           </div>
-          <div className="text-on-surface-variant flex flex-wrap justify-center gap-6 font-bold select-none">
+          <div className="flex gap-6 font-semibold">
             <a 
               href="https://github.com/tapasdash" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-white hover:underline transition-all normal-case"
+              className="hover:text-white flex items-center gap-1 normal-case"
             >
-              github
+              GitHub <ExternalLink className="w-3 h-3" />
             </a>
             <a 
               href="https://www.linkedin.com/in/tapas-dash-41374a138/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-white hover:underline transition-all normal-case"
+              className="hover:text-white flex items-center gap-1 normal-case"
             >
-              linkedin
+              LinkedIn <ExternalLink className="w-3 h-3" />
             </a>
-            <button 
-              onClick={() => setIsTerminalOpen(true)}
-              className="hover:text-primary-fixed transition-colors flex items-center gap-1.5 cursor-pointer font-bold uppercase"
-            >
-              <Terminal className="w-3.5 h-3.5 text-primary-fixed animate-pulse" />
-              <span>TERMINAL_LOG</span>
-            </button>
           </div>
         </footer>
 
-      </div>
+      </main>
 
-      {/* Interactive Cyberpunk CLI Terminal Modal */}
-      {isTerminalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative w-full max-w-3xl h-[75vh] md:h-[65vh] bg-[#020802] border-2 border-primary-fixed flex flex-col shadow-[0_0_40px_rgba(0,255,0,0.25)] rounded-none overflow-hidden font-mono text-primary-fixed">
-            
-            {/* Simulated CRT Screen scanlines */}
-            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(0,255,0,0.03)_50%,rgba(0,0,0,0.12)_50%)] bg-[length:100%_4px] z-10" />
-            
-            {/* Terminal Top Window Bar */}
-            <div className="flex justify-between items-center bg-primary-fixed text-black px-4 py-2 text-[10px] md:text-xs font-bold select-none shrink-0">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4" />
-                <span className="tracking-wider">SECURE SHELL - OPERATOR@SOVEREIGN_SYSTEM</span>
-              </div>
-              <button 
-                onClick={() => setIsTerminalOpen(false)}
-                className="hover:bg-black hover:text-primary-fixed px-2 py-0.5 transition-colors cursor-pointer text-xs"
-                aria-label="Close terminal"
-              >
-                <X className="w-4 h-4 stroke-[3px]" />
-              </button>
-            </div>
-
-            {/* Terminal Log Console */}
-            <div 
-              className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 text-[10px] md:text-xs select-text leading-relaxed font-mono relative normal-case"
-            >
-              {showMatrix && (
-                <MatrixRain onClose={() => setShowMatrix(false)} />
-              )}
-
-              {/* Output history */}
-              {terminalHistory.map((line, idx) => (
-                <div key={idx} className="whitespace-pre-wrap tracking-wider">
-                  {line.type === 'input' && <span className="text-white font-bold">{"> "}</span>}
-                  <span className={
-                    line.type === 'error' 
-                      ? 'text-red-500 font-bold' 
-                      : line.type === 'success' 
-                        ? 'text-white font-bold' 
-                        : 'text-primary-fixed'
-                  }>
-                    {line.isHtml ? (
-                      <span dangerouslySetInnerHTML={{ __html: line.text }} />
-                    ) : (
-                      line.text
-                    )}
-                  </span>
-                </div>
-              ))}
-              
-              {/* Target scroll hook */}
-              <div ref={terminalEndRef} />
-            </div>
-
-            {/* Interactive Shell Input Field */}
-            <form 
-              onSubmit={handleTerminalSubmit}
-              className="bg-black/60 border-t border-primary-fixed/30 p-3 flex items-center gap-2 shrink-0 select-none"
-            >
-              <span className="text-white font-bold select-none text-[11px] sm:text-xs">{"> "}</span>
-              <input 
-                type="text"
-                value={terminalInput}
-                onChange={(e) => setTerminalInput(e.target.value)}
-                className="flex-1 bg-transparent border-none outline-none text-white focus:ring-0 p-0 text-[11px] sm:text-xs uppercase font-mono caret-primary-fixed select-text"
-                placeholder="ENTER COMMAND (E.G. 'HELP', 'ABOUT')..."
-                autoFocus
-              />
-              <button 
-                type="submit"
-                className="hidden sm:inline border border-primary-fixed/40 px-3 py-1 text-[9px] text-primary-fixed hover:bg-primary-fixed hover:text-black font-bold uppercase transition-colors"
-              >
-                EXECUTE
-              </button>
-            </form>
-            
-            {/* Terminal Status bar */}
-            <div className="bg-black border-t border-outline/30 px-4 py-2 flex justify-between items-center text-[8px] md:text-[9px] text-on-surface-variant select-none shrink-0">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-ping" />
-                STATUS: ENCRYPTED_TUNNEL
-              </span>
-              <span>ESC / TYPE 'EXIT' TO CLOSE TERMINAL</span>
-            </div>
-
-          </div>
-        </div>
-      )}
-
+      <LeadCaptureModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

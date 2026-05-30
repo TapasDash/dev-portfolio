@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -5,101 +6,80 @@
 
 @theme inline {
   /* Fonts */
-  --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
-  --font-display: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
 
-  /* Sovereign Terminal Palette */
-  --color-surface: #000000;
-  --color-surface-container-lowest: #000000;
-  --color-surface-container-low: #000000;
-  --color-surface-container: #000000;
-  --color-surface-container-high: #000000;
-  --color-surface-container-highest: #000000;
-  --color-surface-bright: #000000;
-  --color-surface-variant: #000000;
+  /* Premium SaaS Palette */
+  --color-surface: #090D16;
+  --color-surface-container: #0E1321;
+  --color-surface-variant: #151B2E;
 
-  --color-primary-container: #00FF00;
-  --color-primary-fixed: #00FF00;
-  --color-on-primary-container: #000000;
-  --color-on-primary-fixed: #000000;
+  --color-primary-fixed: #00F2FE;
+  --color-secondary: #4FACFE;
+  
+  --color-on-surface: #F3F4F6;
+  --color-on-surface-variant: #9CA3AF;
 
-  --color-on-surface: #FFFFFF;
-  --color-on-surface-variant: #A0A0A0;
+  --color-outline: #222C42;
+  --color-outline-variant: #171E30;
 
-  --color-outline: #333333;
-  --color-outline-variant: #1A1A1A;
-  --color-secondary: #00FF00;
-
-  /* Aliasing required by Radix and standard components if any */
   --color-background: var(--color-surface);
   --color-foreground: var(--color-on-surface);
   --color-border: var(--color-outline-variant);
-  --color-input: var(--color-surface-container-lowest);
   --color-ring: var(--color-primary-fixed);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 transition-colors duration-200;
   }
   body {
-    @apply bg-surface text-on-surface font-mono;
+    @apply bg-surface text-on-surface font-sans antialiased;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(0, 242, 254, 0.03) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(79, 172, 254, 0.03) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(0, 242, 254, 0.02) 0px, transparent 50%);
   }
   h1, h2, h3, h4, h5, h6, .font-display {
-    @apply font-display tracking-tight;
+    @apply font-display tracking-tight text-white;
   }
 }
 
-/* Custom Utilities for Terminal Engine */
+/* Elegant Utilities for SaaS landing */
 @layer utilities {
-  .terminal-border {
-    border: 1px solid var(--color-outline);
+  .glass-card {
+    background: rgba(14, 19, 33, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
-  .ghost-border {
-    border: 1px solid var(--color-outline-variant);
+  .glass-card:hover {
+    border-color: rgba(0, 242, 254, 0.25);
+    box-shadow: 0 10px 30px -10px rgba(0, 242, 254, 0.1);
   }
-  .glass-panel {
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(12px);
+  .gradient-text {
+    background: linear-gradient(135deg, #FFFFFF 30%, #9CA3AF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  .monitor-scanline {
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,255,0,0.02) 50%, rgba(0,255,0,0.02));
-    background-size: 100% 4px;
+  .gradient-text-accent {
+    background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
-/* Custom animations */
-@keyframes pulse-block {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-.animate-pulse-block {
-  animation: pulse-block 1.5s steps(1) infinite;
-}
-
-@keyframes sweep {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(400px); }
-}
-
-.animate-sweep {
-  animation: sweep 3s linear infinite;
-}
-
-/* Custom Scrollbar for Terminal */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #090D16;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-outline);
+  background: #222C42;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-fixed);
+  background: #4FACFE;
 }
-
-
