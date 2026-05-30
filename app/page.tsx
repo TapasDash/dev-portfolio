@@ -7,6 +7,45 @@ import { LeadCaptureModal } from "@/components/LeadCaptureModal";
 export default function Page() {
   const [timeString, setTimeString] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Magnetic Button Hooks/Handlers
+  const [heroMagneticStyle, setHeroMagneticStyle] = useState<React.CSSProperties>({});
+  const [ctaMagneticStyle, setCtaMagneticStyle] = useState<React.CSSProperties>({});
+
+  const handleHeroMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    setHeroMagneticStyle({
+      transform: `translate(${(x / rect.width) * 16}px, ${(y / rect.height) * 16}px)`,
+      transition: 'transform 0.1s cubic-bezier(0.25, 1, 0.5, 1)',
+    });
+  };
+
+  const handleHeroMouseLeave = () => {
+    setHeroMagneticStyle({
+      transform: 'translate(0px, 0px)',
+      transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+    });
+  };
+
+  const handleCtaMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    setCtaMagneticStyle({
+      transform: `translate(${(x / rect.width) * 16}px, ${(y / rect.height) * 16}px)`,
+      transition: 'transform 0.1s cubic-bezier(0.25, 1, 0.5, 1)',
+    });
+  };
+
+  const handleCtaMouseLeave = () => {
+    setCtaMagneticStyle({
+      transform: 'translate(0px, 0px)',
+      transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+    });
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -14,12 +53,39 @@ export default function Page() {
       setTimeString(now.toLocaleTimeString('en-US', { hour12: false }));
     };
     updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    const timeInterval = setInterval(updateTime, 1000);
+
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        setScrollProgress((window.scrollY / totalHeight) * 100);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      clearInterval(timeInterval);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
     <div className="w-full min-h-screen bg-surface text-on-surface relative overflow-x-hidden">
+      
+      {/* Scroll Progress Indicator */}
+      <div className="fixed top-0 left-0 right-0 h-[2px] bg-transparent z-50 pointer-events-none">
+        <div 
+          className="h-full bg-gradient-to-r from-primary-fixed to-secondary transition-all duration-75"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
+      {/* Floating Animated Mesh Background Blobs */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10 select-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-fixed/5 blur-[120px] animate-blob" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-secondary/5 blur-[150px] animate-blob animation-delay-2000" />
+        <div className="absolute top-[30%] right-[20%] w-[40%] h-[40%] rounded-full bg-primary-fixed/3 blur-[100px] animate-blob animation-delay-4000" />
+      </div>
       
       {/* Premium Glass Header Navigation */}
       <nav className="sticky top-0 z-40 w-full bg-surface/80 backdrop-blur-md border-b border-outline px-6 py-4 flex justify-between items-center select-none">
@@ -72,7 +138,10 @@ export default function Page() {
           <div className="flex items-center gap-4 mt-4">
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="bg-primary-fixed hover:bg-primary-fixed/90 text-surface font-semibold px-6 py-3 rounded-lg text-sm transition-all shadow-lg hover:shadow-primary-fixed/20 flex items-center gap-2 font-display"
+              onMouseMove={handleHeroMouseMove}
+              onMouseLeave={handleHeroMouseLeave}
+              style={heroMagneticStyle}
+              className="bg-primary-fixed hover:bg-primary-fixed/90 text-surface font-semibold px-6 py-3 rounded-lg text-sm transition-all shadow-lg hover:shadow-primary-fixed/20 flex items-center gap-2 font-display cursor-pointer"
             >
               Request Architecture Audit
               <ArrowRight className="w-4 h-4" />
@@ -241,7 +310,10 @@ export default function Page() {
             <div className="shrink-0 w-full lg:w-auto">
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="bg-primary-fixed hover:bg-primary-fixed/90 text-surface font-semibold px-8 py-4 rounded-xl text-sm transition-all shadow-lg hover:shadow-primary-fixed/20 flex items-center justify-center gap-2 font-display text-center w-full"
+                onMouseMove={handleCtaMouseMove}
+                onMouseLeave={handleCtaMouseLeave}
+                style={ctaMagneticStyle}
+                className="bg-primary-fixed hover:bg-primary-fixed/90 text-surface font-semibold px-8 py-4 rounded-xl text-sm transition-all shadow-lg hover:shadow-primary-fixed/20 flex items-center justify-center gap-2 font-display text-center w-full cursor-pointer"
               >
                 Request Architecture Audit
                 <ArrowRight className="w-4 h-4" />
