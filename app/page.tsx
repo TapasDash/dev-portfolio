@@ -105,9 +105,12 @@ export default function Page() {
 
         {/* Proof of Work (Case Study) */}
         <section id="track-record" className="scroll-mt-24 flex flex-col gap-12">
-          <div className="flex flex-col sm:flex-row justify-between items-baseline gap-4 border-b border-outline pb-6">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-outline pb-6">
             <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">Proof of Work</h2>
-            <div className="text-on-surface-variant text-xs sm:text-sm font-mono">[ CASE STUDY: AUTOMATING A RECRUITING AGENCY ]</div>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-outline bg-[#0c0c0c] text-[10px] sm:text-xs font-semibold text-on-surface-variant font-sans tracking-wide select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-neutral-500 animate-pulse" />
+              Case Study: Automating a Recruiting Agency
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -176,9 +179,12 @@ export default function Page() {
 
         {/* Services (The Offer) */}
         <section id="timeline" className="scroll-mt-24 flex flex-col gap-12">
-          <div className="flex flex-col sm:flex-row justify-between items-baseline gap-4 border-b border-outline pb-6">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-outline pb-6">
             <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">Services</h2>
-            <div className="text-on-surface-variant text-xs sm:text-sm font-mono">[ ACTIVE RETAINERS ]</div>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-outline bg-[#0c0c0c] text-[10px] sm:text-xs font-semibold text-on-surface-variant font-sans tracking-wide select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-pulse" />
+              Active Retainers
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
