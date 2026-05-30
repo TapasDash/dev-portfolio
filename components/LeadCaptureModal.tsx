@@ -91,8 +91,8 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
         
         {/* Header */}
         <div className="border-b border-outline p-4 sm:px-8 flex justify-between items-center">
-          <span className="text-xs font-mono font-medium tracking-widest text-on-surface-variant uppercase">
-            System / Audit Request
+          <span className="text-xs font-sans font-semibold tracking-wider text-white uppercase">
+            Audit Request
           </span>
           <button 
             onClick={resetAndClose}
@@ -108,9 +108,9 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
           {step === 'details' && (
             <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
               
-              <div className="flex flex-col gap-3">
-                <label className="text-sm font-mono text-on-surface-variant uppercase tracking-widest">
-                  [ PROSPECT IDENTITY ]
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] font-sans font-semibold text-neutral-400 uppercase tracking-wider">
+                  Name
                 </label>
                 <input
                   type="text"
@@ -122,9 +122,9 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
                 />
               </div>
 
-              <div className="flex flex-col gap-3">
-                <label className="text-sm font-mono text-on-surface-variant uppercase tracking-widest">
-                  [ DESCRIBE PROBLEMS / MANUAL WORKFLOW ]
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] font-sans font-semibold text-neutral-400 uppercase tracking-wider">
+                  Workflow Bottleneck
                 </label>
                 <div className="relative flex flex-col">
                   <textarea
@@ -147,7 +147,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
                 </div>
                 {errorMsg && (
                   <span className="text-red-500 text-xs font-mono mt-1 block">
-                    {`[ ERROR: ${errorMsg} ]`}
+                    Error: {errorMsg}
                   </span>
                 )}
               </div>
@@ -166,9 +166,9 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
 
           {step === 'email' && (
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <div className="flex flex-col gap-3">
-                <label className="text-sm font-mono text-on-surface-variant uppercase tracking-widest">
-                  [ DESTINATION PROTOCOL ]
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] font-sans font-semibold text-neutral-400 uppercase tracking-wider">
+                  Delivery Email
                 </label>
                 <p className="text-xl sm:text-2xl font-display font-semibold text-white leading-tight">
                   Where should I send the architectural teardown?
@@ -185,7 +185,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
               />
               {errorMsg && (
                 <span className="text-red-500 text-xs font-mono">
-                  {`[ ERROR: ${errorMsg} ]`}
+                  Error: {errorMsg}
                 </span>
               )}
               <div className="flex justify-between items-center mt-2">
