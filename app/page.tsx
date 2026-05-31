@@ -276,7 +276,7 @@ export default function Page() {
             ].map((service, index) => (
               <div 
                 key={index} 
-                className={`glass-card p-6 rounded-xl flex flex-col justify-between h-full border ${service.active ? 'border-primary-fixed/20 shadow-[0_0_20px_rgba(0,242,254,0.05)]' : 'border-outline'} hover:-translate-y-1.5 transition-all duration-300`}
+                className={`glass-card p-6 rounded-xl flex flex-col justify-between h-full border ${service.active ? 'border-primary-fixed/20 shadow-[0_0_20px_rgba(0,255,102,0.05)]' : 'border-outline'} hover:-translate-y-1.5 transition-all duration-300`}
               >
                 <div>
                   <div className="flex justify-between items-center mb-6">
